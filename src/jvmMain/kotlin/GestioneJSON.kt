@@ -59,7 +59,9 @@ class GestioneJSON {
                         "123456789"
                     ),
                     "GG/MM/YYYY",
-                    "GG/MM/YYYY"
+                    "GG/MM/YYYY",
+                    "1",
+                    "test-prova"
                 )
             )
         )
@@ -79,7 +81,9 @@ class GestioneJSON {
                         "123456789"
                     ),
                     "GG/MM/YYYY",
-                    "GG/MM/YYYY"
+                    "GG/MM/YYYY",
+                    "2",
+                    "test-prova"
                 )
             )
         )
