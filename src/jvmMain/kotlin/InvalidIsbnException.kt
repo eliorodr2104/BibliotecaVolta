@@ -1,0 +1,1 @@
+class InvalidIsbnException(message: String) : Exception(message)
