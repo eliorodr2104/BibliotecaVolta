@@ -1,0 +1,74 @@
+{
+  "Libri": [
+    {
+      "descrizione": null,
+      "titolo": "Kotlin",
+      "annoPubblicazione": "2019",
+      "sottotitolo": "guida al nuovo linguaggio di Android e dello sviluppo mobile",
+      "lingua": "it",
+      "casaEditrice": null,
+      "isbn": "9788850334865",
+      "categoria": null,
+      "copie": null,
+      "nPag": 320,
+      "autore": "Massimo Carli",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=HxyYwwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    {
+      "descrizione": null,
+      "titolo": "Naila di Mondo9",
+      "annoPubblicazione": "2018",
+      "sottotitolo": null,
+      "lingua": "it",
+      "casaEditrice": "Oscar fantastica",
+      "isbn": "9788804688259",
+      "categoria": "Fiction",
+      "copie": null,
+      "nPag": 310,
+      "autore": "Dario Tonani",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=2UUQvAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    {
+      "descrizione": null,
+      "titolo": "Tropico del cancro",
+      "annoPubblicazione": "2013-01",
+      "sottotitolo": null,
+      "lingua": "it",
+      "casaEditrice": null,
+      "isbn": "9788807881371",
+      "categoria": "Fiction",
+      "copie": null,
+      "nPag": 261,
+      "autore": "Henry Miller",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=7OvDlwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    {
+      "descrizione": null,
+      "titolo": "Yoga per il corpo, la mente e lo spirito",
+      "annoPubblicazione": "2018",
+      "sottotitolo": null,
+      "lingua": "it",
+      "casaEditrice": "Oscar spiritualità",
+      "isbn": "9788804705468",
+      "categoria": "Body, Mind & Spirit",
+      "copie": null,
+      "nPag": 284,
+      "autore": "Osho",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=rvbRvAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    {
+      "descrizione": "¡Taladón el rápido ha regresado! Pero, para horror de Tom, su padre es un fantasma. Para salvar a Taladón, Tom debe vencer a las Fieras Fantasma y recuperar los trozos rotos del Amuleto de Avantia. La primera es Nixa, la voz de la muerte. ¿Conseguirá la Fiera engañar a Tom con sus trucos y llevarlo a una muerte segura?",
+      "titolo": "Nixa. La voz de la muerte",
+      "annoPubblicazione": "2013-02-12",
+      "sottotitolo": "Buscafieras 19",
+      "lingua": "es",
+      "casaEditrice": "Grupo Planeta Spain",
+      "isbn": "9788408064614",
+      "categoria": "Juvenile Fiction",
+      "copie": null,
+      "nPag": 74,
+      "autore": "Adam Blade",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=_ieBXb6tSgkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    }
+  ]
+}
