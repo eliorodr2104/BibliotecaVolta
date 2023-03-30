@@ -15,10 +15,10 @@ class GestioneJSON {
         // Creare un oggetto VfsFile che rappresenta il file JSON
         //val file = localVfs("test\\data\\Libri.json")
 
-        val file: File = File("data\\Libri.json")
+        val file = File("data\\Libri.json")
 
         // Scrivere la stringa JSON sul file
-        val bufferedWrite: BufferedWriter = BufferedWriter(withContext(Dispatchers.IO) {
+        val bufferedWrite = BufferedWriter(withContext(Dispatchers.IO) {
             FileWriter(file)
         })
 
