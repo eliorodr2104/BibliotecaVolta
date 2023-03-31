@@ -3,16 +3,34 @@ import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import java.net.URL
 
+/**
+ * Estrai info libro gestisce la ricerca di un ISBn e ne estrae i dati
+ * @author C4V4.exe
+ */
 class EstraiInfoLibro {
-    //https://www.googleapis.com/books/v1/volumes?q=isbn:9788850334865&key=AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
+    /**
+     * Il metodo ricercaLibro accetta un ISBN e restituisce un oggetto Libro
+     * contenente le informazioni relative al libro corrispondente.
+     * Se l'ISBN fornito è vuoto o se non viene trovato alcun libro,
+     * viene lanciata un'eccezione corrispondente.
+     * Il metodo utilizza l'API di Google Books per cercare il libro
+     * e analizza la risposta JSON per estrarre le informazioni pertinenti.
+     *
+     * Un esempio di url che può generare è:
+     * https://www.googleapis.com/books/v1/volumes?q=isbn:9788850334865&key=AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
+     *
+     * @param isbn l'isbn del libro da estrarre
+     * @return libro il libro trovato
+     */
     fun ricercaLibro(isbn: String): Libro {
         if(isbn == ""){
             throw InvalidIsbnException("Isbn non valido")
         }
+        //Api Key generata con l'account lorenzo.cavallero@volta-alessandria.it
         val apiKey = "AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk"
+        //prende da Google Books l'isbn e lo carica in una stringa json
         val jsonString = URL("https://www.googleapis.com/books/v1/volumes?q=isbn:$isbn&key=$apiKey").readText()
-        val parser = JSONParser()
-        val jsonObject = parser.parse(jsonString) as JSONObject
+        val jsonObject = JSONParser().parse(jsonString) as JSONObject
         val items = jsonObject["items"] as? JSONArray
 
         if (items.isNullOrEmpty()) {
@@ -22,51 +40,27 @@ class EstraiInfoLibro {
         val bookInfo = items[0] as JSONObject
         val volumeInfo = bookInfo["volumeInfo"] as JSONObject
 
-        val title = volumeInfo["title"] as String
-        val subtitle = volumeInfo["subtitle"] as String?
-        val authors = (volumeInfo["authors"] as JSONArray?)?.joinToString(", ") { it as String } ?: ""
-        val language = volumeInfo["language"] as String
-        val imageUrl = (volumeInfo["imageLinks"] as JSONObject?)?.get("thumbnail") as String? ?: ""
-        val publisher = volumeInfo["publisher"] as String?
-        val publishedDate = volumeInfo["publishedDate"] as String?
-        val pageCount = volumeInfo["pageCount"] as Long?
-        val categories = (volumeInfo["categories"] as JSONArray?)?.joinToString(", ") { it as String }
-
-        val description = volumeInfo["description"] as String?
-
         return Libro(
-            isbn, title, subtitle, language, publisher, authors,
-            publishedDate, imageUrl, pageCount, categories, description, null
+            isbn,
+            volumeInfo["title"] as String,
+            volumeInfo["subtitle"] as String?,
+            volumeInfo["language"] as String,
+            volumeInfo["publisher"] as String?,
+            (volumeInfo["authors"] as JSONArray?)?.joinToString(", ") { it as String } ?: "",
+            volumeInfo["publishedDate"] as String?,
+            (volumeInfo["imageLinks"] as JSONObject?)?.get("thumbnail") as String? ?: "",
+            volumeInfo["pageCount"] as Long?,
+            (volumeInfo["categories"] as JSONArray?)?.joinToString(", ") { it as String },
+            volumeInfo["description"] as String?,
+            null
         )
     }
-
 }
 
 
 /*
+AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
 esempio di ciò che dovrebbe sbucare:
-
-val isbn: String,
-val titolo: String,
-val sottotitolo: String,
-val lingua: String,
-val casaEditrice: String?,
-val autore: String,
-val annoPubblicazione: String?,
-val pathImmagine: String,
-val nPag: Long?,
-val categoria: String?,
-val descrizione: String?,
-val copie: ArrayList<CopiaLibro>?
-
-
-
-AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
-AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
-AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
-AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
-
-
 
 
 {

@@ -1,5 +1,15 @@
 import kotlinx.serialization.Serializable
 
+/**
+ * @author Elio0
+ * data class persona
+ *
+ * @param nome: String
+ * @param cognome: String
+ * @param mail: String = "$nome.$cognome@volta-alessndria.it"
+ * @param mailAlternativa: String
+ * @param numero: String
+ */
 @Serializable
 data class Persona (val nome: String,
     val cognome: String,

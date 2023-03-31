@@ -8,9 +8,22 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
+/**
+ * @author C4V4H.exe
+ *
+ * classe Gestione JSON che permette di aggiungere un oggetto dentro un json
+ */
 class GestioneJSON {
-    fun addBook(libro: Libro) {
-        val file = File("data\\Libri.json")
+    /**
+     *Il metodo addBook aggiunge un oggetto Libro al file Libri.json.
+     * Utilizza la libreria JSONParser per analizzare il contenuto del file
+     * e Json.encodeToString per trasformare l'oggetto Libro in un oggetto JSON.
+     * Il nuovo libro viene aggiunto all'array JSON solo se non esiste già nel file.
+     *
+     * @param libro Libro da aggiungere
+     */
+    fun addBook(libro: Libro, path: String) {
+        val file = File(path)
 
         val content = (JSONParser().parse(FileReader(file)) as JSONObject)["Libri"] as JSONArray
         val nuovoLibro = JSONParser().parse(Json.encodeToString(libro)) as JSONObject
@@ -29,7 +42,14 @@ class GestioneJSON {
         }
     }
 
-    fun controllaEsistenza(content: JSONArray, isbn: String): Boolean{
+    /**
+     * Controlla se esiste già un isbn in un JSONArray
+     *
+     * @param content Json array da verificare
+     * @param isbn isbn da cercare
+     * @return Boolean esiste o no
+     */
+    private fun controllaEsistenza(content: JSONArray, isbn: String): Boolean{
         var jsonObject: JSONObject
 
         for(i in 0 until content.size){
@@ -41,6 +61,11 @@ class GestioneJSON {
         return true
     }
 
+    /**
+     * Metodo per fare test, che crea un oggetto libro completo e lo returna
+     *
+     * @return libro di test
+     */
     fun inizializzaLibroTest(): Libro {
         val arr: ArrayList<CopiaLibro> = ArrayList()
         arr.add(
@@ -104,3 +129,42 @@ class GestioneJSON {
         )
     }
 }
+
+
+
+/*
+Esempio di formato json che si ottiene con la classe:
+(null = non trovato o assente)
+
+{
+  "Libri": [
+    {
+      "descrizione": null,
+      "titolo": "Kotlin",
+      "annoPubblicazione": "2019",
+      "sottotitolo": "guida al nuovo linguaggio di Android e dello sviluppo mobile",
+      "lingua": "it",
+      "casaEditrice": null,
+      "isbn": "9788850334865",
+      "categoria": null,
+      "copie": null,
+      "nPag": 320,
+      "autore": "Massimo Carli",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=HxyYwwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    },
+    {
+      "descrizione": null,
+      "titolo": "Naila di Mondo9",
+      "annoPubblicazione": "2018",
+      "sottotitolo": null,
+      "lingua": "it",
+      "casaEditrice": "Oscar fantastica",
+      "isbn": "9788804688259",
+      "categoria": "Fiction",
+      "copie": null,
+      "nPag": 310,
+      "autore": "Dario Tonani",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=2UUQvAEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+    }
+  ]
+}*/
