@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage
  *
  * Da aggiungere dettagli del libro preso in prestito
  *
- * @author Ermanno Oliver
+ * @author Ermanno Oliveri
  */
 class GestionePrestito {
 
