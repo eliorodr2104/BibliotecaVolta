@@ -79,9 +79,9 @@ class GestioneJSON {
                     Persona(
                         "nome",
                         "cognome",
-                        "nome.cognome@volta-alessandria.it",
+                        "123456789",
                         "test@gmail.com",
-                        "123456789"
+                        "nome.cognome@volta-alessandria.it"
                     ),
                     "GG/MM/YYYY",
                     "GG/MM/YYYY",
@@ -101,9 +101,8 @@ class GestioneJSON {
                     Persona(
                         "nome",
                         "cognome",
-                        "nome.cognome@volta-alessandria.it",
-                        "test@gmail.com",
-                        "123456789"
+                        "123456789",
+                        "test@gmail.com"
                     ),
                     "GG/MM/YYYY",
                     "GG/MM/YYYY",

@@ -2,20 +2,6 @@
   "Libri": [
     {
       "descrizione": null,
-      "titolo": "Kotlin",
-      "annoPubblicazione": "2019",
-      "sottotitolo": "guida al nuovo linguaggio di Android e dello sviluppo mobile",
-      "lingua": "it",
-      "casaEditrice": null,
-      "isbn": "9788850334865",
-      "categoria": null,
-      "copie": null,
-      "nPag": 320,
-      "autore": "Massimo Carli",
-      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=HxyYwwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
-    },
-    {
-      "descrizione": null,
       "titolo": "Naila di Mondo9",
       "annoPubblicazione": "2018",
       "sottotitolo": null,
@@ -69,6 +55,20 @@
       "nPag": 74,
       "autore": "Adam Blade",
       "pathImmagine": "http:\/\/books.google.com\/books\/content?id=_ieBXb6tSgkC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+    },
+    {
+      "descrizione": null,
+      "titolo": "Kotlin",
+      "annoPubblicazione": "2019",
+      "sottotitolo": "guida al nuovo linguaggio di Android e dello sviluppo mobile",
+      "lingua": "it",
+      "casaEditrice": null,
+      "isbn": "9788850334865",
+      "categoria": null,
+      "copie": null,
+      "nPag": 320,
+      "autore": "Massimo Carli",
+      "pathImmagine": "http:\/\/books.google.com\/books\/content?id=HxyYwwEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
     }
   ]
 }
