@@ -15,5 +15,6 @@ data class CopiaLibro(
     var idCopia: String,
     var condizioni: String,
     var posizione: String?,
-    var prestito: Prestito
+    var prestito: Prestito,
+    var inPrestito: Boolean
 )

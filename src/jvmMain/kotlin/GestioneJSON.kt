@@ -60,12 +60,12 @@ class GestioneJSON {
         }
         return true
     }
-
-    /**
+}
+    /*
      * Metodo per fare test, che crea un oggetto libro completo e lo returna
      *
      * @return libro di test
-     */
+
     fun inizializzaLibroTest(): Libro {
         val arr: ArrayList<CopiaLibro> = ArrayList()
         arr.add(
@@ -87,7 +87,8 @@ class GestioneJSON {
                     "GG/MM/YYYY",
                     "1",
                     "test-prova"
-                )
+                ),
+                false
             )
         )
         arr.add(
@@ -108,7 +109,8 @@ class GestioneJSON {
                     "GG/MM/YYYY",
                     "2",
                     "test-prova"
-                )
+                ),
+                false
             )
         )
 
@@ -126,8 +128,7 @@ class GestioneJSON {
             "libro di prova",
             arr
         )
-    }
-}
+    }     */
 
 
 
