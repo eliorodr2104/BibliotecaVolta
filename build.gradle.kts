@@ -52,6 +52,7 @@ kotlin {
                 implementation("io.ktor:ktor-server-netty:2.0.2")
                 implementation("io.ktor:ktor-server-html-builder-jvm:2.0.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
+                implementation("mysql:mysql-connector-java:5.1.6")
             }
         }
         val jvmTest by getting
