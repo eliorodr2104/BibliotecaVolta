@@ -10,26 +10,24 @@ import kotlinx.serialization.Serializable
  * @param sottotitolo: String
  * @param lingua: String
  * @param casaEditrice: String
- * @param autore: String
+ * @param idAutore: String
  * @param annoPubblicazione: String
- * @param pathImmagine: String
- * @param nPag: Long
- * @param categoria: String
+ * @param idCategoria: String
+ * @param idGenere: String
  * @param descrizione: String
  * @param copie: ArrayList<CopiaLibro>
  */
 @Serializable
-data class Libro (
+data class Libro(
     val isbn: String,
     val titolo: String,
     val sottotitolo: String?,
     val lingua: String,
     val casaEditrice: String?,
-    val autore: String,
+    val idAutore: Int,
     val annoPubblicazione: String?,
-    val pathImmagine: String,
-    val nPag: Long?,
-    val categoria: String?,
-    val descrizione: String?,
-    val copie: ArrayList<CopiaLibro>?
+    val idCategoria: Int,
+    val idGenere: Int,
+    val copie: ArrayList<CopiaLibro>?,
+    val descrizione: String?
 )

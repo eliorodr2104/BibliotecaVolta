@@ -41,24 +41,28 @@ class EstraiInfoLibro {
         val volumeInfo = bookInfo["volumeInfo"] as JSONObject
 
         return Libro(
-            isbn,
-            volumeInfo["title"] as String,
-            volumeInfo["subtitle"] as String?,
-            volumeInfo["language"] as String,
-            volumeInfo["publisher"] as String?,
-            (volumeInfo["authors"] as JSONArray?)?.joinToString(", ") { it as String } ?: "",
-            volumeInfo["publishedDate"] as String?,
-            (volumeInfo["imageLinks"] as JSONObject?)?.get("thumbnail") as String? ?: "",
-            volumeInfo["pageCount"] as Long?,
-            (volumeInfo["categories"] as JSONArray?)?.joinToString(", ") { it as String },
-            volumeInfo["description"] as String?,
-            null
+            isbn = isbn,
+            titolo = volumeInfo["title"] as String,
+            sottotitolo = volumeInfo["subtitle"] as String?,
+            lingua = volumeInfo["language"] as String,
+            casaEditrice = volumeInfo["publisher"] as String?,
+            idAutore = 0/*(volumeInfo["authors"] as JSONArray?)?.joinToString(", ") { it as String } ?: ""*/,
+            annoPubblicazione = volumeInfo["publishedDate"] as String?,
+            idCategoria = 0/*(volumeInfo["categories"] as JSONArray?)?.joinToString(", ") { it as String }*/,
+            idGenere = 0,
+            descrizione = volumeInfo["description"] as String?,
+            copie = null
         )
     }
 }
 
 
 /*
+ * @param categoria: String
+ * @param descrizione: String
+ * @param copie: ArrayList<CopiaLibro>
+
+
 AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
 esempio di ciò che dovrebbe sbucare:
 
