@@ -55,41 +55,56 @@ class DBConnection {
         return null
     }
 
-    fun aggiungiLibro(libro: Libro){
+    fun aggiungiLibro(libro: Libro): String {
         try {
+            val preparedStatement: PreparedStatement?
             conn = DriverManager.getConnection(url, username, password)
-            println("Connessione al database riuscita")
-            conn?.prepareStatement("INSERT INTO libri (" +
+
+            val query = "INSERT INTO libri (" +
                     "`ISBN`, " + //String
                     "`Titolo`, " + //String
                     "`Sottotitolo`, " + //String
                     "`Lingua`, " + //String
                     "`CasaEditrice`, " + //String
                     "`IDAutore`, " + //Int
-                    "`AnnoPubblicazione`," + //Date
-                    " `IDCategoria`, " + //Int
+                    "`AnnoPubblicazione`, " + //Int
+                    "`IDCategoria`, " + //Int
                     "`IDGenere`, " + //Int
-                    "`Descrizione`) " + //String
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)").use { statement ->
-                statement?.setString(1, libro.isbn)
-                statement?.setString(2, libro.titolo)
-                statement?.setString(3, libro.sottotitolo)
-                statement?.setString(4, libro.lingua)
-                statement?.setString(5, libro.casaEditrice)
-                statement?.setInt(6, libro.idAutore)
-                statement?.setString(7, libro.annoPubblicazione)
-                statement?.setInt(8, libro.idCategoria)
-                statement?.setInt(9, libro.idGenere)
-                statement?.setString(10, libro.descrizione)
-                statement?.executeUpdate()
+                    "`Descrizione`" + //String
+                    ") " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+            preparedStatement = conn?.prepareStatement(query)
+            preparedStatement?.setString(1, libro.isbn)
+            preparedStatement?.setString(2, libro.titolo)
+            preparedStatement?.setString(3, libro.sottotitolo)
+            preparedStatement?.setString(4, libro.lingua)
+            preparedStatement?.setString(5, libro.casaEditrice)
+            preparedStatement?.setInt(6, libro.idAutore)
+            preparedStatement?.setString(7, libro.annoPubblicazione)
+            preparedStatement?.setInt(8, libro.idCategoria)
+            preparedStatement?.setInt(9, libro.idGenere)
+            preparedStatement?.setString(10, libro.descrizione)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Inserimento riuscito"
+                } else {
+                    "Inserimento fallito"
+                }
             }
         } catch (e: SQLException) {
-            println("Connessione al database fallita")
-            println(e.message)
+            return e.message!!
         } finally {
             conn?.close()
         }
+
+        return ""
     }
+
+
 
 }
 
@@ -99,7 +114,8 @@ class DBConnection {
 *
 *
 *
-*     fun aggiungiLibro(libro: Libro) {
+*
+fun aggiungiLibro(libro: Libro) {
         try {
             conn = DriverManager.getConnection(url, username, password)
             println("Connessione al database riuscita")
@@ -140,6 +156,54 @@ class DBConnection {
         }
     }
 *
+
+    fun aggiungiLibro(libro: Libro): String? {
+        try {
+            val rowsAffected: Int?
+            conn = DriverManager.getConnection(url, username, password)
+            println("Connessione al database riuscita")
+            conn?.prepareStatement(
+                "INSERT INTO libri (" +
+                        "`ISBN`, " + //String
+                        "`Titolo`, " + //String
+                        "`Sottotitolo`, " + //String
+                        "`Lingua`, " + //String
+                        "`CasaEditrice`, " + //String
+                        "`IDAutore`, " + //Int
+                        "`AnnoPubblicazione`," + //Date
+                        " `IDCategoria`, " + //Int
+                        "`IDGenere`, " + //Int
+                        "`Descrizione`) " + //String
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            ).use { statement ->
+                statement?.setString(1, libro.isbn)
+                statement?.setString(2, libro.titolo)
+                statement?.setString(3, libro.sottotitolo)
+                statement?.setString(4, libro.lingua)
+                statement?.setString(5, libro.casaEditrice)
+                statement?.setInt(6, libro.idAutore)
+                statement?.setString(7, libro.annoPubblicazione)
+                statement?.setInt(8, libro.idCategoria)
+                statement?.setInt(9, libro.idGenere)
+                statement?.setString(10, libro.descrizione)
+                rowsAffected = statement?.executeUpdate()
+
+            }
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Inserimento riuscito"
+                } else {
+                    "Inserimento fallito"
+                }
+            }
+        } catch (e: SQLException) {
+            println("Connessione al database fallita")
+            return e.message
+        } finally {
+            conn?.close()
+        }
+        return ""
+    }
 *
 *
 *
