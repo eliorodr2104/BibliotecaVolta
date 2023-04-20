@@ -6,6 +6,7 @@ plugins {
 
 group = "me.elio0"
 version = "1.0-SNAPSHOT"
+var ktorversion = "2.3.0"
 
 repositories {
     jcenter()
@@ -49,10 +50,15 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-server-netty:2.0.2")
                 implementation("io.ktor:ktor-server-html-builder-jvm:2.0.2")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.2")
                 implementation("mysql:mysql-connector-java:5.1.6")
+                implementation("io.ktor:ktor-server-netty:$ktorversion")
+                implementation("io.ktor:ktor-server-core:$ktorversion")
+                implementation("io.ktor:ktor-server-cio:$ktorversion")
+                implementation("ch.qos.logback:logback-classic:1.3.6")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
+                implementation("io.ktor:ktor-server-call-logging:$ktorversion")
             }
         }
         val jvmTest by getting
