@@ -1,16 +1,24 @@
 package me.elio0.application
 
 import DBConnection
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
+import io.ktor.network.tls.certificates.*
 import io.ktor.server.application.*
-import io.ktor.server.engine.embeddedServer
+import io.ktor.server.cio.*
+import io.ktor.server.engine.*
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.callloging.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.security.SecureRandom
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
 fun HTML.index() {
     head {
@@ -27,9 +35,40 @@ fun HTML.index() {
     }
 }
 
+
 fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    val keyStoreFile = File("keystore.jks")
+    val keyStore = buildKeyStore {
+        certificate("sampleAlias") {
+            password = "foobar"
+            //domains = listOf("127.0.0.1", "0.0.0.0", "localhost")
+        }
+    }
+    keyStore.saveToFile(keyStoreFile, "123456")
+
+    val environment = applicationEngineEnvironment {
+        log = LoggerFactory.getLogger("ktor.application")
+        connector {
+            port = 8080
+        }
+        sslConnector(
+            keyStore = keyStore,
+            keyAlias = "sampleAlias",
+            keyStorePassword = { "123456".toCharArray() },
+            privateKeyPassword = { "foobar".toCharArray() }) {
+            port = 8443
+            keyStorePath = keyStoreFile
+        }
+        module(Application::module)
+    }
+
+
+    //embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    embeddedServer(Netty, environment).start(wait = true)
+
 }
+
+
 
 
 fun Application.module() {
@@ -49,8 +88,8 @@ fun Application.biblioteca() {
 
         post("/libri") {
             val libro = call.receive<Json>()
+            println(libro.toString())
             println(db.aggiungiLibro(Json.decodeFromString(libro.toString())))
-            println(libro)
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
         }
 
