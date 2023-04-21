@@ -60,6 +60,12 @@ class GestioneJSON {
         }
         return true
     }
+
+    fun getJsonString(list: JSONArray): String{
+        val obj= JSONObject()
+        obj["array"] = list
+        return obj.toJSONString()
+    }
 }
     /*
      * Metodo per fare test, che crea un oggetto libro completo e lo returna

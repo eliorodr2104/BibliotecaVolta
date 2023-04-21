@@ -1,6 +1,7 @@
 package me.elio0.application
 
 import DBConnection
+import GestioneJSON
 import io.ktor.http.*
 import io.ktor.network.tls.certificates.*
 import io.ktor.server.application.*
@@ -68,9 +69,6 @@ fun main() {
 
 }
 
-
-
-
 fun Application.module() {
     biblioteca()
 }
@@ -80,7 +78,8 @@ fun Application.biblioteca() {
     routing {
         //libri
         get("/libri") {
-            call.respondText("JSON contenente l'elenco di tutti i libri")
+            call.respondText(GestioneJSON().getJsonString(db.estraiTutto("Libri")))
+            db.close()
         }
         get("/libri/{isbn}") {
             call.respondText("JSON contenente le informazioni del libro con ISBN ${call.parameters["isbn"]}")
@@ -88,8 +87,8 @@ fun Application.biblioteca() {
 
         post("/libri") {
             val libro = call.receive<Json>()
-            println(libro.toString())
             println(db.aggiungiLibro(Json.decodeFromString(libro.toString())))
+            println(libro)
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
         }
 

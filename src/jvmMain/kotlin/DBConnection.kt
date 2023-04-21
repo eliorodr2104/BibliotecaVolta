@@ -1,43 +1,28 @@
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+import org.json.simple.parser.JSONParser
 import java.sql.*
 import java.util.*
+import javax.xml.transform.Result
+import kotlin.collections.ArrayList
 
-class DBConnection {
-    private var conn: Connection? = null
+class DBConnection() {
+    private var conn: Connection
     private var username = "root" // provide the username
     private var password = "" // provide the corresponding password
     private val url = "jdbc:mysql://localhost/biblioteca?useSSL=false&serverTimezone=UTC"
 
-    fun getConnection() {
-        val connectionProps = Properties()
-        connectionProps["user"] = username
-        connectionProps["password"] = password
-        try {
-            Class.forName("com.mysql.jdbc.Driver").newInstance()
-            conn = DriverManager.getConnection(
-                "jdbc:" + "mysql" + "://" +
-                        "127.0.0.1" +
-                        ":" + "3306" + "/" +
-                        "",
-                connectionProps
-            )
-        } catch (ex: SQLException) {
-            // handle ay errors
-            ex.printStackTrace()
-        } catch (ex: Exception) {
-            // handle any errors
-            ex.printStackTrace()
-        }
+    init {
+        conn = DriverManager.getConnection(url, username, password)
     }
 
     fun executeCommand(sql: String): ResultSet? {
         try {
-            conn = DriverManager.getConnection(url, username, password)
-
-            return conn?.createStatement()?.executeQuery(sql)
+            return conn.createStatement()?.executeQuery(sql)
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            conn?.close()
         }
         return null
     }
@@ -46,11 +31,9 @@ class DBConnection {
         try {
             conn = DriverManager.getConnection(url, username, password)
 
-            return conn?.prepareStatement(sql).use { statement }
+            return conn.prepareStatement(sql).use { statement }
         } catch (e: SQLException) {
             e.printStackTrace()
-        } finally {
-            conn?.close()
         }
         return null
     }
@@ -58,8 +41,6 @@ class DBConnection {
     fun aggiungiLibro(libro: Libro): String {
         try {
             val preparedStatement: PreparedStatement?
-            conn = DriverManager.getConnection(url, username, password)
-
             val query = "INSERT INTO libri (" +
                     "`ISBN`, " + //String
                     "`Titolo`, " + //String
@@ -74,7 +55,7 @@ class DBConnection {
                     ") " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-            preparedStatement = conn?.prepareStatement(query)
+            preparedStatement = conn.prepareStatement(query)
             preparedStatement?.setString(1, libro.isbn)
             preparedStatement?.setString(2, libro.titolo)
             preparedStatement?.setString(3, libro.sottotitolo)
@@ -97,22 +78,92 @@ class DBConnection {
             }
         } catch (e: SQLException) {
             return e.message!!
-        } finally {
-            conn?.close()
         }
-
         return ""
     }
 
 
+    fun estraiTutto(table: String): JSONArray {
+        val arr = JSONArray()
+        // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+        val rs = estrai("SELECT * FROM $table")
+        //aggiunge tutti gli elementi trovati a un arraylist
+        while (rs.next()) {
+            arr.add(
+                JSONParser().parse(
+                    Json.encodeToString(
+                        Libro(
+                            isbn = rs.getString("ISBN"),
+                            titolo = rs.getString("Titolo"),
+                            sottotitolo = rs.getString("Sottotitolo"),
+                            lingua = rs.getString("Lingua"),
+                            casaEditrice = rs.getString("CasaEditrice"),
+                            idAutore = rs.getInt("IDAutore"),
+                            annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                            idCategoria = rs.getInt("IDCategoria"),
+                            idGenere = rs.getInt("IDGenere"),
+                            descrizione = rs.getString("Descrizione"),
+                            copie = null
+                        )
+                    )
+                ) as JSONObject
+
+            )
+        }
+        // Chiude la connessione al database
+        rs.close()
+        return arr
+    }
+
+    private fun estrai(query: String): ResultSet{
+       return conn.createStatement().executeQuery(query)
+    }
+
+    fun close() {
+        conn.close()
+    }
+
 
 }
+/*
+ISBN
+Titolo
+Sottotitolo
+Lingua
+CasaEditrice
+IDAutore
+AnnoPubblicazione
+IDCategoria
+IDGenere
+Descrizione
+*/
 
 
 /*
 * @TODO generare json esito
 *
 *
+    fun getConnection() {
+        val connectionProps = Properties()
+        connectionProps["user"] = username
+        connectionProps["password"] = password
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance()
+            conn = DriverManager.getConnection(
+                "jdbc:" + "mysql" + "://" +
+                        "127.0.0.1" +
+                        ":" + "3306" + "/" +
+                        "",
+                connectionProps
+            )
+        } catch (ex: SQLException) {
+            // handle ay errors
+            ex.printStackTrace()
+        } catch (ex: Exception) {
+            // handle any errors
+            ex.printStackTrace()
+        }
+    }
 *
 *
 fun aggiungiLibro(libro: Libro) {
