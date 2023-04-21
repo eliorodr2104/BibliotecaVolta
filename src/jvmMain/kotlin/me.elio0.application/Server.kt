@@ -4,11 +4,11 @@ import DBConnection
 import GestioneJSON
 import io.ktor.http.*
 import io.ktor.network.tls.certificates.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.cio.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.callloging.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -17,9 +17,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.security.SecureRandom
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManagerFactory
+
 
 fun HTML.index() {
     head {
@@ -39,6 +37,7 @@ fun HTML.index() {
 
 fun main() {
     val keyStoreFile = File("keystore.jks")
+
     val keyStore = buildKeyStore {
         certificate("sampleAlias") {
             password = "foobar"
@@ -60,18 +59,25 @@ fun main() {
             port = 8443
             keyStorePath = keyStoreFile
         }
+//        install(ContentNegotiation)
         module(Application::module)
     }
 
 
     //embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
     embeddedServer(Netty, environment).start(wait = true)
-
 }
 
 fun Application.module() {
     biblioteca()
+    install(ContentNegotiation){
+        json(Json{
+            prettyPrint = true
+            isLenient = true
+        })
+    }
 }
+
 
 fun Application.biblioteca() {
     val db = DBConnection()
@@ -86,8 +92,8 @@ fun Application.biblioteca() {
         }
 
         post("/libri") {
-            val libro = call.receive<Json>()
-            println(db.aggiungiLibro(Json.decodeFromString(libro.toString())))
+            val libro = call.receive<String>()
+            println(db.aggiungiLibro(Json.decodeFromString(libro)))
             println(libro)
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
         }

@@ -60,6 +60,8 @@ kotlin {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
                 implementation("io.ktor:ktor-server-call-logging:$ktorversion")
                 implementation("io.ktor:ktor-network-tls-certificates:$ktorversion")
+                implementation("io.ktor:ktor-server-content-negotiation:$ktorversion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorversion")
             }
         }
         val jvmTest by getting
