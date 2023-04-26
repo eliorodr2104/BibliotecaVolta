@@ -84,11 +84,14 @@ fun Application.biblioteca() {
     routing {
         //libri
         get("/libri") {
-            call.respondText(GestioneJSON().getJsonString(db.estraiTutto("Libri")))
+            val test = db.estraiTutto("Libri")
+            call.respondText(GestioneJSON().getJsonString(test))
+            println(test)
             db.close()
         }
         get("/libri/{isbn}") {
-            call.respondText("JSON contenente le informazioni del libro con ISBN ${call.parameters["isbn"]}")
+            call.respond(db.estraiLibro(call.parameters["isbn"] ?: ""))
+            db.close()
         }
 
         post("/libri") {
@@ -96,6 +99,7 @@ fun Application.biblioteca() {
             println(db.aggiungiLibro(Json.decodeFromString(libro)))
             println(libro)
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
+            db.close()
         }
 
         put("/libri/{isbn}") {
@@ -127,11 +131,11 @@ fun Application.biblioteca() {
 
         // Copie
         get("/libri/{isbn}/copie") {
-            call.respondText("JSON contenente l'elenco di tutte le copie del libro con ISBN ${call.parameters["isbn"]}")
+            call.respond(db.estraiCopie(call.parameters["isbn"] ?: ""))
         }
 
         get("/libri/{isbn}/copie/{idCopia}") {
-            call.respondText("JSON contenente le informazioni della copia con ID ${call.parameters["idCopia"]} del libro con ISBN ${call.parameters["isbn"]}")
+            call.respond(db.estraiCopie(call.parameters["isbn"] ?: "", call.parameters["idCopia"]))
         }
 
         post("/libri/{isbn}/copie") {

@@ -4,8 +4,6 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import java.sql.*
-import java.util.*
-import javax.xml.transform.Result
 import kotlin.collections.ArrayList
 
 class DBConnection() {
@@ -92,7 +90,7 @@ class DBConnection() {
             arr.add(
                 JSONParser().parse(
                     Json.encodeToString(
-                        Libro(
+                        DatiLibro(
                             isbn = rs.getString("ISBN"),
                             titolo = rs.getString("Titolo"),
                             sottotitolo = rs.getString("Sottotitolo"),
@@ -103,7 +101,6 @@ class DBConnection() {
                             idCategoria = rs.getInt("IDCategoria"),
                             idGenere = rs.getInt("IDGenere"),
                             descrizione = rs.getString("Descrizione"),
-                            copie = null
                         )
                     )
                 ) as JSONObject
@@ -115,8 +112,103 @@ class DBConnection() {
         return arr
     }
 
-    private fun estrai(query: String): ResultSet{
-       return conn.createStatement().executeQuery(query)
+    private fun estrai(query: String): ResultSet {
+        return conn.createStatement().executeQuery(query)
+    }
+
+    fun estraiLibro(isbn: String): JSONObject {
+        try {
+            val rs = estrai("SELECT * FROM Libri WHERE isbn=$isbn")
+            rs.next()
+            return JSONParser().parse(
+                Json.encodeToString(
+                    DatiLibro(
+                        isbn = rs.getString("ISBN"),
+                        titolo = rs.getString("Titolo"),
+                        sottotitolo = rs.getString("Sottotitolo"),
+                        lingua = rs.getString("Lingua"),
+                        casaEditrice = rs.getString("CasaEditrice"),
+                        idAutore = rs.getInt("IDAutore"),
+                        annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                        idCategoria = rs.getInt("IDCategoria"),
+                        idGenere = rs.getInt("IDGenere"),
+                        descrizione = rs.getString("Descrizione"),
+                    )
+                )
+            ) as JSONObject
+        } catch (e: Exception) {
+            println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest")
+            return JSONObject()
+        }
+    }
+
+    fun estraiCopie(isbn: String): JSONObject {
+        val arr = ArrayList<CopiaLibro>()
+        // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+        var rs = estrai("SELECT * FROM copie WHERE isbn=$isbn")
+        //aggiunge tutti gli elementi trovati a un arraylist
+        while (rs.next()) {
+            arr.add(
+                CopiaLibro(
+                    isbn = rs.getString("ISBN"),
+                    idCopia = rs.getString("IDCopia"),
+                    condizioni = rs.getString("Condizioni"),
+                    inPrestito = rs.getBoolean("Prestato"),
+                    sezione = rs.getString("Sezione"),
+                    scaffale = rs.getInt("Scaffale"),
+                    ripiano = rs.getInt("Ripiano"),
+                    np = rs.getInt("Numero Pagine"),
+                    idPrestito = rs.getInt("IDPrestito"),
+                    binaryIMG = rs.getBinaryStream("image_column").readAllBytes()
+                )
+            )
+        }
+        rs = estrai("SELECT * FROM libri WHERE isbn=$isbn")
+        rs.next()
+        return JSONParser().parse(
+            Json.encodeToString(
+                Libro(
+                    isbn = rs.getString("ISBN"),
+                    titolo = rs.getString("Titolo"),
+                    sottotitolo = rs.getString("Sottotitolo"),
+                    lingua = rs.getString("Lingua"),
+                    casaEditrice = rs.getString("CasaEditrice"),
+                    idAutore = rs.getInt("IDAutore"),
+                    annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                    idCategoria = rs.getInt("IDCategoria"),
+                    idGenere = rs.getInt("IDGenere"),
+                    descrizione = rs.getString("Descrizione"),
+                    copie = arr
+                )
+            )
+        ) as JSONObject
+    }
+
+    fun estraiCopie(isbn: String, idCopia: String?): JSONObject {
+        try {
+            // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+            val rs = estrai("SELECT * FROM copie WHERE isbn=$isbn")
+            rs.next()
+            return JSONParser().parse(
+                Json.encodeToString(
+                    CopiaLibro(
+                        isbn = rs.getString("ISBN"),
+                        idCopia = rs.getString("IDCopia"),
+                        condizioni = rs.getString("Condizioni"),
+                        inPrestito = rs.getBoolean("Prestato"),
+                        sezione = rs.getString("Sezione"),
+                        scaffale = rs.getInt("Scaffale"),
+                        ripiano = rs.getInt("Ripiano"),
+                        np = rs.getInt("Numero Pagine"),
+                        idPrestito = rs.getInt("IDPrestito"),
+                        binaryIMG = rs.getBinaryStream("image_column").readAllBytes()
+                    )
+                )
+            ) as JSONObject
+        } catch (e: Exception) {
+            println("test")
+            return JSONObject()
+        }
     }
 
     fun close() {
@@ -136,6 +228,18 @@ AnnoPubblicazione
 IDCategoria
 IDGenere
 Descrizione
+
+
+
+IDCopia
+ISBN
+Condizioni
+Sezione
+Scaffale
+Ripiano
+Numero Pagine
+Prestato
+Immagine
 */
 
 
