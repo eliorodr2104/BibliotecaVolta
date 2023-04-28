@@ -62,6 +62,7 @@ kotlin {
                 implementation("io.ktor:ktor-network-tls-certificates:$ktorversion")
                 implementation("io.ktor:ktor-server-content-negotiation:$ktorversion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorversion")
+                implementation("com.squareup.okhttp3:okhttp:4.10.0")
             }
         }
         val jvmTest by getting

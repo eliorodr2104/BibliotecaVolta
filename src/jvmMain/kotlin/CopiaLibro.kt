@@ -23,6 +23,5 @@ data class CopiaLibro(
     val scaffale: Int,
     val ripiano: Int,
     val np: Int,
-    val idPrestito: Int,
-    val binaryIMG: ByteArray?
+    val idPrestito: Int
 )

@@ -75,21 +75,21 @@ fun Application.biblioteca() {
 
 fun Routing.libri(db: DBConnection) {
     get("/libri") {
-        val test = db.estraiTutto("Libri")
-        call.respondText(GestioneJSON().getJsonString(test))
-        println(test)
+        call.respondText(GestioneJSON().getJsonString(db.estraiTutto("Libri")))
     }
 
     get("/libri/{isbn}") {
-        println(call.parameters["isbn"])
         call.respond(db.estraiLibro(call.parameters["isbn"] ?: ""))
     }
 
     post("/libri") {
-        val libro = call.receive<String>()
-        println(db.aggiungiLibro(Json.decodeFromString(libro)))
-        println(libro)
-        call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
+        try {
+            val libro = call.receive<String>()
+            println(db.aggiungiLibro(Json.decodeFromString(libro)))
+            call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
+        }
     }
     //@TODO implementare il put del libro -> C4V4H.exe
     put("/libri/{isbn}") {
@@ -99,6 +99,37 @@ fun Routing.libri(db: DBConnection) {
         )
     }
 }
+
+
+
+fun Routing.copie(db: DBConnection) {
+    get("/libri/{isbn}/copie") {
+        call.respond(db.estraiCopie(call.parameters["isbn"] ?: ""))
+    }
+
+    get("/libri/{isbn}/copie/{idCopia}") {
+        call.respond(db.estraiCopie(call.parameters["isbn"] ?: "", call.parameters["idCopia"]))
+    }
+
+    post("/libri/{isbn}/copie") {
+        try {
+            val copia = call.receive<String>()
+            println(db.aggiungiCopia(Json.decodeFromString(copia)))
+            call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
+        }
+    }
+
+    //@TODO implementare il put della copia -> C4V4H.exe
+    put("/libri/{isbn}/copie/{idCopia}") {
+        call.respond(
+            HttpStatusCode.OK,
+            "Informazioni della copia con ID ${call.parameters["idCopia"]} aggiornate con successo"
+        )
+    }
+}
+
 
 
 fun Routing.utenti(db: DBConnection) {
@@ -122,23 +153,6 @@ fun Routing.utenti(db: DBConnection) {
     }
 }
 
-
-fun Routing.copie(db: DBConnection) {
-    get("/libri/{isbn}/copie") {
-        call.respond(db.estraiCopie(call.parameters["isbn"] ?: ""))
-    }
-
-    get("/libri/{isbn}/copie/{idCopia}") {
-        call.respond(db.estraiCopie(call.parameters["isbn"] ?: "", call.parameters["idCopia"]))
-    }
-
-    post("/libri/{isbn}/copie") {
-        call.respond(
-            HttpStatusCode.Created,
-            "Nuova copia del libro con ISBN ${call.parameters["isbn"]} creata con successo"
-        )
-    }
-}
 
 
 //@TODO implementare la gesione degli utenti (get, getID, post, put) -> C4V4H.exe

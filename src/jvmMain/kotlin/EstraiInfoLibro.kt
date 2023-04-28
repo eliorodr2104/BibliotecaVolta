@@ -2,6 +2,8 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import java.net.URL
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 /**
  * Estrai info libro gestisce la ricerca di un ISBn e ne estrae i dati
@@ -22,7 +24,7 @@ class EstraiInfoLibro {
      * @param isbn l'isbn del libro da estrarre
      * @return libro il libro trovato
      */
-    fun ricercaLibro(isbn: String): Libro {
+    fun ricercaLibro(isbn: String): DatiLibro {
         if(isbn == ""){
             throw InvalidIsbnException("Isbn non valido")
         }
@@ -40,7 +42,8 @@ class EstraiInfoLibro {
         val bookInfo = items[0] as JSONObject
         val volumeInfo = bookInfo["volumeInfo"] as JSONObject
 
-        return Libro(
+        val imageLink = volumeInfo["imageLinks"] as JSONObject
+        return DatiLibro(
             isbn = isbn,
             titolo = volumeInfo["title"] as String,
             sottotitolo = volumeInfo["subtitle"] as String?,
@@ -48,10 +51,10 @@ class EstraiInfoLibro {
             casaEditrice = volumeInfo["publisher"] as String?,
             idAutore = 0/*(volumeInfo["authors"] as JSONArray?)?.joinToString(", ") { it as String } ?: ""*/,
             annoPubblicazione = volumeInfo["publishedDate"] as String?,
-            idCategoria = 0/*(volumeInfo["categories"] as JSONArray?)?.joinToString(", ") { it as String }*/,
-            idGenere = 0,
+            idCategoria = -1,
+            idGenere = -1,
             descrizione = volumeInfo["description"] as String?,
-            copie = null
+            image = imageLink["thumbnail"] as String
         )
     }
 }
@@ -65,7 +68,7 @@ class EstraiInfoLibro {
 
 AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk
 esempio di ciò che dovrebbe sbucare:
-
+https://www.googleapis.com/books/v1/volumes?q=isbn:9788828728863&key=AIzaSyC_jEjuIHolKlAfkWUd35SCEgEyFtS2JGk"
 
 {
   "kind": "books#volumes",

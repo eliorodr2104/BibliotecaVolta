@@ -36,7 +36,7 @@ class DBConnection() {
         return null
     }
 
-    fun aggiungiLibro(libro: Libro): String {
+    fun aggiungiLibro(libro: DatiLibro): String {
         try {
             val preparedStatement: PreparedStatement?
             val query = "INSERT INTO libri (" +
@@ -46,12 +46,13 @@ class DBConnection() {
                     "`Lingua`, " + //String
                     "`CasaEditrice`, " + //String
                     "`IDAutore`, " + //Int
-                    "`AnnoPubblicazione`, " + //Int
+                    "`AnnoPubblicazione`, " + //String
                     "`IDCategoria`, " + //Int
                     "`IDGenere`, " + //Int
-                    "`Descrizione`" + //String
-                    ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "`Descrizione`, " + //String
+                    "`Immagine`" + //bytes
+            ") " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
             preparedStatement?.setString(1, libro.isbn)
@@ -64,6 +65,7 @@ class DBConnection() {
             preparedStatement?.setInt(8, libro.idCategoria)
             preparedStatement?.setInt(9, libro.idGenere)
             preparedStatement?.setString(10, libro.descrizione)
+            preparedStatement?.setString(11, libro.image)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -75,7 +77,7 @@ class DBConnection() {
                 }
             }
         } catch (e: SQLException) {
-            return e.message!!
+            return e.message ?: ""
         }
         return ""
     }
@@ -101,6 +103,7 @@ class DBConnection() {
                             idCategoria = rs.getInt("IDCategoria"),
                             idGenere = rs.getInt("IDGenere"),
                             descrizione = rs.getString("Descrizione"),
+                            null
                         )
                     )
                 ) as JSONObject
@@ -132,15 +135,15 @@ class DBConnection() {
                     idCategoria = rs.getInt("IDCategoria"),
                     idGenere = rs.getInt("IDGenere"),
                     descrizione = rs.getString("Descrizione"),
+                    null
                 )
             )
         } catch (e: Exception) {
-            println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest")
-            return "JSONObject()"
+            return e.message ?: ""
         }
     }
 
-    fun estraiCopie(isbn: String): JSONObject {
+    fun estraiCopie(isbn: String): String {
         val arr = ArrayList<CopiaLibro>()
         // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
         var rs = estrai("SELECT * FROM copie WHERE isbn=$isbn")
@@ -156,57 +159,99 @@ class DBConnection() {
                     scaffale = rs.getInt("Scaffale"),
                     ripiano = rs.getInt("Ripiano"),
                     np = rs.getInt("Numero Pagine"),
-                    idPrestito = rs.getInt("IDPrestito"),
-                    binaryIMG = rs.getBinaryStream("image_column").readAllBytes()
+                    idPrestito = rs.getInt("IDPrestito")
                 )
             )
         }
         rs = estrai("SELECT * FROM libri WHERE isbn=$isbn")
         rs.next()
-        return JSONParser().parse(
-            Json.encodeToString(
-                Libro(
-                    isbn = rs.getString("ISBN"),
-                    titolo = rs.getString("Titolo"),
-                    sottotitolo = rs.getString("Sottotitolo"),
-                    lingua = rs.getString("Lingua"),
-                    casaEditrice = rs.getString("CasaEditrice"),
-                    idAutore = rs.getInt("IDAutore"),
-                    annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                    idCategoria = rs.getInt("IDCategoria"),
-                    idGenere = rs.getInt("IDGenere"),
-                    descrizione = rs.getString("Descrizione"),
-                    copie = arr
-                )
+        return Json.encodeToString(
+            Libro(
+                isbn = rs.getString("ISBN"),
+                titolo = rs.getString("Titolo"),
+                sottotitolo = rs.getString("Sottotitolo"),
+                lingua = rs.getString("Lingua"),
+                casaEditrice = rs.getString("CasaEditrice"),
+                idAutore = rs.getInt("IDAutore"),
+                annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                idCategoria = rs.getInt("IDCategoria"),
+                idGenere = rs.getInt("IDGenere"),
+                copie = arr,
+                descrizione = rs.getString("Descrizione"),
+                image = null
             )
-        ) as JSONObject
+        )
     }
 
-    fun estraiCopie(isbn: String, idCopia: String?): JSONObject {
+    fun estraiCopie(isbn: String, idCopia: String?): String {
         try {
             // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
             val rs = estrai("SELECT * FROM copie WHERE isbn=$isbn")
             rs.next()
-            return JSONParser().parse(
-                Json.encodeToString(
-                    CopiaLibro(
-                        isbn = rs.getString("ISBN"),
-                        idCopia = rs.getString("IDCopia"),
-                        condizioni = rs.getString("Condizioni"),
-                        inPrestito = rs.getBoolean("Prestato"),
-                        sezione = rs.getString("Sezione"),
-                        scaffale = rs.getInt("Scaffale"),
-                        ripiano = rs.getInt("Ripiano"),
-                        np = rs.getInt("Numero Pagine"),
-                        idPrestito = rs.getInt("IDPrestito"),
-                        binaryIMG = rs.getBinaryStream("image_column").readAllBytes()
-                    )
+            return Json.encodeToString(
+                CopiaLibro(
+                    isbn = rs.getString("ISBN"),
+                    idCopia = rs.getString("IDCopia"),
+                    condizioni = rs.getString("Condizioni"),
+                    inPrestito = rs.getBoolean("Prestato"),
+                    sezione = rs.getString("Sezione"),
+                    scaffale = rs.getInt("Scaffale"),
+                    ripiano = rs.getInt("Ripiano"),
+                    np = rs.getInt("Numero Pagine"),
+                    idPrestito = rs.getInt("IDPrestito")
                 )
-            ) as JSONObject
+            )
         } catch (e: Exception) {
-            println("test")
-            return JSONObject()
+            return e.message ?: ""
         }
+    }
+
+    fun aggiungiCopia(copia: CopiaLibro): String {
+        try {
+            val preparedStatement: PreparedStatement?
+            val query = "INSERT INTO libri (" +
+                    "`IDCopia`, " + //String
+                    "`ISBN`, " + //String
+                    "`Condizioni`, " + //String
+                    "`Sezione`, " + //String
+                    "`Scaffale`, " + //String
+                    "`Ripiano`, " + //Int
+                    "`Numero Pagine`, " + //Int
+                    "`Prestato`, " + //Int
+                    "`Immagine`" + //Bynary
+                    ") " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+            preparedStatement = conn.prepareStatement(query)
+            preparedStatement?.setString(1, copia.isbn)
+            preparedStatement?.setString(2, copia.idCopia)
+            preparedStatement?.setString(3, copia.condizioni)
+            preparedStatement?.setBoolean(4, copia.inPrestito)
+            preparedStatement?.setString(5, copia.sezione)
+            preparedStatement?.setInt(6, copia.scaffale)
+            preparedStatement?.setInt(7, copia.ripiano)
+            preparedStatement?.setInt(8, copia.np)
+            preparedStatement?.setInt(9, copia.idPrestito)
+            //preparedStatement?.setBinaryStream(10, copia.binaryIMG)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Inserimento riuscito"
+                } else {
+                    "Inserimento fallito"
+                }
+            }
+        } catch (e: SQLException) {
+            return e.message ?: ""
+        }
+        return ""
+    }
+
+    //@TODO fare il coso che se un autore esiste restituisce l'id al contrario ne crea uno nuovo.
+    fun analizzaAutore(autore: String): Int{
+        return 0
     }
 
     fun close() {

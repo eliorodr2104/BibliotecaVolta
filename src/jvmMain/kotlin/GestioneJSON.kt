@@ -66,6 +66,10 @@ class GestioneJSON {
         obj["array"] = list
         return obj.toJSONString()
     }
+
+    fun getJsonString(any: DatiLibro): String{
+        return Json.encodeToString(any)
+    }
 }
     /*
      * Metodo per fare test, che crea un oggetto libro completo e lo returna
