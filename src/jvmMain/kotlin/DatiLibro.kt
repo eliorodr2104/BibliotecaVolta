@@ -14,7 +14,6 @@ import kotlinx.serialization.Serializable
  * @param idCategoria: String
  * @param idGenere: String
  * @param descrizione: String
- * @param copie: ArrayList<CopiaLibro>
  */
 @Serializable
 data class DatiLibro(
