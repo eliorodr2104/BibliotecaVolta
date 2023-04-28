@@ -2,7 +2,6 @@ import kotlinx.serialization.Serializable
 
 /**
  * @author C4V4.exe
- * @author Elio0
  *
  * Data class Libro
  * @param isbn: String

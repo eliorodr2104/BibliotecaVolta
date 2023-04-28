@@ -36,6 +36,8 @@ fun HTML.index() {
 
 
 fun main() {
+
+    /*
     val keyStoreFile = File("keystore.jks")
 
     val keyStore = buildKeyStore {
@@ -46,11 +48,14 @@ fun main() {
     }
     keyStore.saveToFile(keyStoreFile, "123456")
 
+     */
+
     val environment = applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
         connector {
             port = 8080
         }
+        /*
         sslConnector(
             keyStore = keyStore,
             keyAlias = "sampleAlias",
@@ -59,6 +64,8 @@ fun main() {
             port = 8443
             keyStorePath = keyStoreFile
         }
+
+         */
 //        install(ContentNegotiation)
         module(Application::module)
     }
@@ -87,11 +94,11 @@ fun Application.biblioteca() {
             val test = db.estraiTutto("Libri")
             call.respondText(GestioneJSON().getJsonString(test))
             println(test)
-            db.close()
         }
         get("/libri/{isbn}") {
+            println("aaaaaa")
+            println(call.parameters["isbn"])
             call.respond(db.estraiLibro(call.parameters["isbn"] ?: ""))
-            db.close()
         }
 
         post("/libri") {
@@ -99,7 +106,6 @@ fun Application.biblioteca() {
             println(db.aggiungiLibro(Json.decodeFromString(libro)))
             println(libro)
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
-            db.close()
         }
 
         put("/libri/{isbn}") {

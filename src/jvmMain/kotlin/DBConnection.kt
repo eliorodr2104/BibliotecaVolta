@@ -116,29 +116,27 @@ class DBConnection() {
         return conn.createStatement().executeQuery(query)
     }
 
-    fun estraiLibro(isbn: String): JSONObject {
+    fun estraiLibro(isbn: String): String {
         try {
             val rs = estrai("SELECT * FROM Libri WHERE isbn=$isbn")
             rs.next()
-            return JSONParser().parse(
-                Json.encodeToString(
-                    DatiLibro(
-                        isbn = rs.getString("ISBN"),
-                        titolo = rs.getString("Titolo"),
-                        sottotitolo = rs.getString("Sottotitolo"),
-                        lingua = rs.getString("Lingua"),
-                        casaEditrice = rs.getString("CasaEditrice"),
-                        idAutore = rs.getInt("IDAutore"),
-                        annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                        idCategoria = rs.getInt("IDCategoria"),
-                        idGenere = rs.getInt("IDGenere"),
-                        descrizione = rs.getString("Descrizione"),
-                    )
+            return Json.encodeToString(
+                DatiLibro(
+                    isbn = rs.getString("ISBN"),
+                    titolo = rs.getString("Titolo"),
+                    sottotitolo = rs.getString("Sottotitolo"),
+                    lingua = rs.getString("Lingua"),
+                    casaEditrice = rs.getString("CasaEditrice"),
+                    idAutore = rs.getInt("IDAutore"),
+                    annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                    idCategoria = rs.getInt("IDCategoria"),
+                    idGenere = rs.getInt("IDGenere"),
+                    descrizione = rs.getString("Descrizione"),
                 )
-            ) as JSONObject
+            )
         } catch (e: Exception) {
             println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ntest")
-            return JSONObject()
+            return "JSONObject()"
         }
     }
 
