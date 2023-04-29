@@ -74,7 +74,7 @@ fun Application.biblioteca() {
 
 fun Routing.libri(db: DBConnection) {
     get("/libri") {
-        call.respondText(GestioneJSON().getJsonString(db.estraiTutto("Libri")))
+        call.respondText(db.estraiLibri())
     }
 
     get("/libri/{isbn}") {
@@ -90,15 +90,18 @@ fun Routing.libri(db: DBConnection) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
     }
-    //@TODO implementare il put del libro -> C4V4H.exe
+
+    //@TODO Stabilire come farlo andare
     put("/libri/{isbn}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni del libro con ISBN ${call.parameters["isbn"]} aggiornate con successo"
-        )
+        try {
+            val libro = call.receive<String>()
+            println(db.aggiornaLibro(Json.decodeFromString(libro)))
+            call.respond(HttpStatusCode.OK, "Libro aggiornato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "Libro non trovato")
+        }
     }
 }
-
 
 
 fun Routing.copie(db: DBConnection) {
@@ -106,79 +109,95 @@ fun Routing.copie(db: DBConnection) {
         call.respond(db.estraiCopie(call.parameters["isbn"] ?: ""))
     }
 
-    get("/libri/{isbn}/copie/{idCopia}") {
-        call.respond(db.estraiCopie(call.parameters["isbn"] ?: "", call.parameters["idCopia"]))
+    get("copie/{idCopia}") {
+        call.respond(db.estraiCopia(call.parameters["idCopia"]))
     }
 
     post("/libri/{isbn}/copie") {
         try {
             val copia = call.receive<String>()
             println(db.aggiungiCopia(Json.decodeFromString(copia)))
-            call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
+            call.respond(HttpStatusCode.Created, "Nuova copia creato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
     }
 
-    //@TODO implementare il put della copia -> C4V4H.exe
-    put("/libri/{isbn}/copie/{idCopia}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni della copia con ID ${call.parameters["idCopia"]} aggiornate con successo"
-        )
+    //@TODO Stabilire come farlo andare
+    put("copie/{idCopia}") {
+        try {
+            val copia = call.receive<String>()
+            println(db.aggiornaCopia(Json.decodeFromString(copia)))
+            call.respond(HttpStatusCode.OK, "Copia aggiornato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "Copia non trovato")
+        }
     }
 }
-
 
 
 fun Routing.utenti(db: DBConnection) {
     get("/utenti") {
-        call.respondText("JSON contenente l'elenco di tutti gli utenti")
+        call.respond(db.estraiUtenti())
     }
 
     get("/utenti/{idUtente}") {
-        call.respondText("JSON contenente le informazioni dell'utente con ID ${call.parameters["idUtente"]}")
+        call.respond(db.estraiUtente(call.parameters["idUtente"]))
     }
 
     post("/utenti") {
-        call.respond(HttpStatusCode.Created, "Nuovo utente creato con successo")
+        try {
+            val utente = call.receive<String>()
+            println(db.aggiungiUtente(Json.decodeFromString(utente)))
+            call.respond(HttpStatusCode.Created, "Nuovo utente creato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
+        }
     }
 
+    //@TODO Stabilire come farlo andare
     put("/utenti/{idUtente}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni dell'utente con ID ${call.parameters["idUtente"]} aggiornate con successo"
-        )
+        try {
+            val utente = call.receive<String>()
+            println(db.aggiornaUtente(Json.decodeFromString(utente)))
+            call.respond(HttpStatusCode.OK, "Copia aggiornato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "Copia non trovato")
+        }
     }
 }
 
 
-
-//@TODO implementare la gesione degli utenti (get, getID, post, put) -> C4V4H.exe
 fun Routing.prestiti(db: DBConnection) {
     get("/utenti/{idUtente}/prestiti") {
-        call.respondText("JSON contenente l'elenco di tutti i prestiti di un utente nell'ultimo anno")
+        call.respond(db.estraiPrestiti(call.parameters["idUtente"]))
     }
 
-    get("/utenti/{idUtente}/prestiti/{idPrestito}") {
-        call.respondText("JSON contenente il prestito con ID ${call.parameters["idPrestito"]} dell'utente con ID  ${call.parameters["idUtente"]}")
+    get("/prestiti/{idPrestito}") {
+        call.respond(db.estraiPrestito(call.parameters["idPrestito"]))
     }
 
-    post("/utenti/{idUtente}/prestiti") {
-        call.respond(
-            HttpStatusCode.Created,
-            "Nuovo prestito dell'utente con ID ${call.parameters["idUtente"]} creato con successo"
-        )
+    post("/prestiti") {
+        try {
+            val prestito = call.receive<String>()
+            println(db.aggiungiPrestito(Json.decodeFromString(prestito)))
+            call.respond(HttpStatusCode.Created, "Nuovo utente creato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
+        }
     }
 
-    put("/utenti/{idUtente}/prestiti/{idPrestito}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni del prestito con ID ${call.parameters["idPrestito"]} dell'utente con ID ${call.parameters["idUtente"]} aggiornate con successo"
-        )
+    //@TODO Stabilire come farlo andare
+    put("prestiti/{idPrestito}") {
+        try {
+            val utente = call.receive<String>()
+            println(db.aggiornaUtente(Json.decodeFromString(utente)))
+            call.respond(HttpStatusCode.OK, "Copia aggiornato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "Copia non trovato")
+        }
     }
 }
-
 
 
 //@TODO implementare la gesione delle categorie (get, getID, post, put) -> C4V4H.exe

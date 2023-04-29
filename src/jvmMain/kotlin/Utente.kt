@@ -11,10 +11,12 @@ import kotlinx.serialization.Serializable
  * @param numero: String
  */
 @Serializable
-data class Persona(
+data class Utente(
+    val idUtente: Int,
     val nome: String,
     val cognome: String,
     val numero: String?,
     val mailAlternativa: String,
+    val grado: Int = 0,
     val mail: String = "$nome.$cognome@volta-alessndria.it"
 )

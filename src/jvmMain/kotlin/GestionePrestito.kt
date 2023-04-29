@@ -24,7 +24,7 @@ class GestionePrestito {
         val b = isScaduto(prestito)
         return if (b < 0){
             //PRESTITO SCADUTO
-            invioMailScaduto(prestito)
+            //invioMailScaduto(prestito)
             -1
         } else {
             b
@@ -71,14 +71,14 @@ class GestionePrestito {
      *
      * @param prestito prestito per il quale inviare la comunicazione
      */
-    fun invioMailScaduto(prestito : Prestito){
+   /* fun invioMailScaduto(prestito : Prestito){
 
         // al momento configurato con mailAlternativa, con configurazione mail
         // google "volta-alessandria.it" sostituire mailAlternativa in mail
-        val destinatario = prestito.persona?.mailAlternativa
+        val destinatario = prestito.idUtente?.mailAlternativa
 
         //testo della mail da rifare con le info del DB
-        val testoMail = "Gentile: " + prestito.persona?.nome + " " + prestito.persona?.cognome + "\nIl tuo " +
+        val testoMail = "Gentile: " + prestito.idUtente?.nome + " " + prestito.idUtente?.cognome + "\nIl tuo " +
                 "prestito per il libro: " + prestito.isbn + " - copia: " + prestito.idCopia + " del " + prestito.dataInizio + " è scaduto, restituiscilo al più presto." +
                 "\nBiblioteca"
 
@@ -109,7 +109,7 @@ class GestionePrestito {
 
         Transport.send(message)
 
-    }
+    }*/
 
 
 }

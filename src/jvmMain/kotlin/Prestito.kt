@@ -6,16 +6,19 @@ import kotlinx.serialization.Serializable
  * @author C4V4H.exe
  *
  * @param prestato: Boolean
- * @param persona: Persona
+ * @param idUtente: Persona
  * @param dataInizio: String
  * @param dataFine: String
  * @param idCopia: String
  * @param isbn: String
  */
 @Serializable
-data class Prestito(var prestato: Boolean,
-                    val persona: Persona?,
-                    val dataInizio: String?,
-                    val dataFine: String?,
-                    val idCopia: String,
-                    val isbn: String?)
+data class Prestito(
+    val idPrestito: Int,
+    val idCopia: Int,
+    val idUtente: Int,
+    val dataFine: String?,
+    val dataInizio: String?,
+    val condizioneIniziale: String?,
+    val condizioneFinale: String?
+)
