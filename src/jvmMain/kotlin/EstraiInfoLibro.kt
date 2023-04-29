@@ -2,8 +2,6 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
 import java.net.URL
-import okhttp3.OkHttpClient
-import okhttp3.Request
 
 /**
  * Estrai info libro gestisce la ricerca di un ISBn e ne estrae i dati
@@ -49,7 +47,7 @@ class EstraiInfoLibro {
             sottotitolo = volumeInfo["subtitle"] as String?,
             lingua = volumeInfo["language"] as String,
             casaEditrice = volumeInfo["publisher"] as String?,
-            idAutore = 0/*(volumeInfo["authors"] as JSONArray?)?.joinToString(", ") { it as String } ?: ""*/,
+            autore = (volumeInfo["authors"] as JSONArray?)?.joinToString(" - ") { it as String } ?: "",
             annoPubblicazione = volumeInfo["publishedDate"] as String?,
             idCategoria = -1,
             idGenere = -1,

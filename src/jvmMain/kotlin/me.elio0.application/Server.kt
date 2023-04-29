@@ -66,7 +66,6 @@ fun Application.biblioteca() {
         utenti(db)
         copie(db)
         prestiti(db)
-        autori(db)
         categorie(db)
         generi(db)
     }
@@ -180,31 +179,6 @@ fun Routing.prestiti(db: DBConnection) {
     }
 }
 
-
-//@TODO implementare la gesione degli autori (get, getID, post, put) -> C4V4H.exe
-fun Routing.autori(db: DBConnection) {
-    get("/autori") {
-        call.respondText("JSON contenente tutti gli autori")
-    }
-
-    get("/autori/{idAutore}") {
-        call.respondText("JSON contenente l'autore con ID ${call.parameters["idAutore"]}")
-    }
-
-    post("/autori/{idAutore}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni dell'autore con ID ${call.parameters["idAutore"]} aggiunte con successo"
-        )
-    }
-
-    put("/autori/{idAutore}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni dell'autore con ID ${call.parameters["idAutore"]} aggiornate con successo"
-        )
-    }
-}
 
 
 //@TODO implementare la gesione delle categorie (get, getID, post, put) -> C4V4H.exe

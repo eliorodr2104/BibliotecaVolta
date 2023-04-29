@@ -45,7 +45,7 @@ class DBConnection() {
                     "`Sottotitolo`, " + //String
                     "`Lingua`, " + //String
                     "`CasaEditrice`, " + //String
-                    "`IDAutore`, " + //Int
+                    "`Autore`, " + //Int
                     "`AnnoPubblicazione`, " + //String
                     "`IDCategoria`, " + //Int
                     "`IDGenere`, " + //Int
@@ -60,7 +60,7 @@ class DBConnection() {
             preparedStatement?.setString(3, libro.sottotitolo)
             preparedStatement?.setString(4, libro.lingua)
             preparedStatement?.setString(5, libro.casaEditrice)
-            preparedStatement?.setInt(6, libro.idAutore)
+            preparedStatement?.setString(6, libro.autore)
             preparedStatement?.setString(7, libro.annoPubblicazione)
             preparedStatement?.setInt(8, libro.idCategoria)
             preparedStatement?.setInt(9, libro.idGenere)
@@ -98,7 +98,7 @@ class DBConnection() {
                             sottotitolo = rs.getString("Sottotitolo"),
                             lingua = rs.getString("Lingua"),
                             casaEditrice = rs.getString("CasaEditrice"),
-                            idAutore = rs.getInt("IDAutore"),
+                            autore = rs.getString("IDAutore"),
                             annoPubblicazione = rs.getString("AnnoPubblicazione"),
                             idCategoria = rs.getInt("IDCategoria"),
                             idGenere = rs.getInt("IDGenere"),
@@ -130,7 +130,7 @@ class DBConnection() {
                     sottotitolo = rs.getString("Sottotitolo"),
                     lingua = rs.getString("Lingua"),
                     casaEditrice = rs.getString("CasaEditrice"),
-                    idAutore = rs.getInt("IDAutore"),
+                    autore = rs.getString("IDAutore"),
                     annoPubblicazione = rs.getString("AnnoPubblicazione"),
                     idCategoria = rs.getInt("IDCategoria"),
                     idGenere = rs.getInt("IDGenere"),
@@ -172,7 +172,7 @@ class DBConnection() {
                 sottotitolo = rs.getString("Sottotitolo"),
                 lingua = rs.getString("Lingua"),
                 casaEditrice = rs.getString("CasaEditrice"),
-                idAutore = rs.getInt("IDAutore"),
+                autore = rs.getString("IDAutore"),
                 annoPubblicazione = rs.getString("AnnoPubblicazione"),
                 idCategoria = rs.getInt("IDCategoria"),
                 idGenere = rs.getInt("IDGenere"),
@@ -210,29 +210,28 @@ class DBConnection() {
         try {
             val preparedStatement: PreparedStatement?
             val query = "INSERT INTO libri (" +
-                    "`IDCopia`, " + //String
-                    "`ISBN`, " + //String
-                    "`Condizioni`, " + //String
-                    "`Sezione`, " + //String
-                    "`Scaffale`, " + //String
-                    "`Ripiano`, " + //Int
-                    "`Numero Pagine`, " + //Int
-                    "`Prestato`, " + //Int
-                    "`Immagine`" + //Bynary
+                    "`IDCopia`, " + //String 1
+                    "`ISBN`, " + //String 2
+                    "`Condizioni`, " + //String 3
+                    "`Sezione`, " + //String 4
+                    "`Scaffale`, " + //String 5
+                    "`Ripiano`, " + //Int 6
+                    "`Numero Pagine`, " + //Int 7
+                    "`Prestato`, " + //Int 8
+                    "`IDPrestito`, " +
                     ") " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
-            preparedStatement?.setString(1, copia.isbn)
-            preparedStatement?.setString(2, copia.idCopia)
+            preparedStatement?.setString(1, copia.idCopia)
+            preparedStatement?.setString(2, copia.isbn)
             preparedStatement?.setString(3, copia.condizioni)
-            preparedStatement?.setBoolean(4, copia.inPrestito)
-            preparedStatement?.setString(5, copia.sezione)
-            preparedStatement?.setInt(6, copia.scaffale)
-            preparedStatement?.setInt(7, copia.ripiano)
-            preparedStatement?.setInt(8, copia.np)
+            preparedStatement?.setString(4, copia.sezione)
+            preparedStatement?.setInt(5, copia.scaffale)
+            preparedStatement?.setInt(6, copia.ripiano)
+            preparedStatement?.setInt(7, copia.np)
+            preparedStatement?.setBoolean(8, copia.inPrestito)
             preparedStatement?.setInt(9, copia.idPrestito)
-            //preparedStatement?.setBinaryStream(10, copia.binaryIMG)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 

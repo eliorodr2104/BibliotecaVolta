@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
  * @param sottotitolo: String
  * @param lingua: String
  * @param casaEditrice: String
- * @param idAutore: String
+ * @param autore: String
  * @param annoPubblicazione: String
  * @param idCategoria: String
  * @param idGenere: String
@@ -23,7 +23,7 @@ data class DatiLibro(
     val sottotitolo: String?,
     val lingua: String,
     val casaEditrice: String?,
-    val idAutore: Int,
+    val autore: String,
     val annoPubblicazione: String?,
     val idCategoria: Int,
     val idGenere: Int,
