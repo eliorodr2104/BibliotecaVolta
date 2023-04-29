@@ -27,6 +27,6 @@ data class DatiLibro(
     val annoPubblicazione: String?,
     val idCategoria: Int,
     val idGenere: Int,
-    open val descrizione: String?,
+    val descrizione: String?,
     val image: String?
 )
