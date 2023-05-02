@@ -1,3 +1,5 @@
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -19,12 +21,37 @@ import javax.mail.internet.MimeMessage
 class GestionePrestito {
 
     //formato data DD/MM/YYYY : String
-    fun verificaPrestito(prestito : Prestito) : Long{
+    fun verificaPrestito(id : Int) : Long{
+        val dbconn = DBConnection()
+        val prestito = Json.decodeFromString(dbconn.estraiPrestito(id.toString())) as Prestito
+        val utente = Json.decodeFromString(dbconn.estraiUtente(prestito.idUtente.toString())) as Utente
+
+
+        /*UTENTE E PRESTITO DI PROVA
+        val prestito = Prestito(
+            idPrestito = 1,
+            idCopia = 2,
+            idUtente = 3,
+            dataFine = "01/05/2023",
+            dataInizio = "15/04/2023",
+            condizioneIniziale = "Buone condizioni",
+            condizioneFinale = "Ottime condizioni"
+        )
+
+        val utente = Utente(
+            idUtente = 1,
+            nome = "Mario",
+            cognome = "Rossi",
+            numero = "1234567890",
+            mailAlternativa = "ermitubeyt@gmail.com",
+            grado = 1
+        )*/
+
 
         val b = isScaduto(prestito)
         return if (b < 0){
             //PRESTITO SCADUTO
-            //invioMailScaduto(prestito)
+            invioMailScaduto(prestito, utente)
             -1
         } else {
             b
@@ -71,16 +98,33 @@ class GestionePrestito {
      *
      * @param prestito prestito per il quale inviare la comunicazione
      */
-   /* fun invioMailScaduto(prestito : Prestito){
+    fun invioMailScaduto(prestito : Prestito, utente : Utente){
 
-        // al momento configurato con mailAlternativa, con configurazione mail
+        val dbconn = DBConnection()
+        val libro = Json.decodeFromString(dbconn.estraiCopia(prestito.idCopia.toString())) as Libro
+
+
+
+        /* LIBRO DI PROVA
+        val libro = Libro(
+            isbn = "9788808183155",
+            titolo = "Il fu Mattia Pascal",
+            sottotitolo = "storia di un equivoco",
+            lingua = "Italiano",
+            casaEditrice = "Feltrinelli",
+            autore = "Luigi Pirandello",
+            annoPubblicazione = "2018",
+            idCategoria = 1,
+            idGenere = 3,
+            copie = null,
+            descrizione = "Il fu Mattia Pascal è un romanzo di Luigi Pirandello pubblicato nel 1904",
+            image = "")*/
+
+            // al momento configurato con mailAlternativa, con configurazione mail
         // google "volta-alessandria.it" sostituire mailAlternativa in mail
-        val destinatario = prestito.idUtente?.mailAlternativa
+        val destinatario = utente.mailAlternativa
 
-        //testo della mail da rifare con le info del DB
-        val testoMail = "Gentile: " + prestito.idUtente?.nome + " " + prestito.idUtente?.cognome + "\nIl tuo " +
-                "prestito per il libro: " + prestito.isbn + " - copia: " + prestito.idCopia + " del " + prestito.dataInizio + " è scaduto, restituiscilo al più presto." +
-                "\nBiblioteca"
+
 
         val username = "ermi1@gmx.com" //username di accesso (email)
         val password = "Tuboermi4" //password
@@ -94,7 +138,7 @@ class GestionePrestito {
             put("mail.smtp.starttls.enable", "true")
         }
 
-        val session = Session.getInstance(properties, object : javax.mail.Authenticator() {
+        val session = Session.getInstance(properties, object : Authenticator() {
             override fun getPasswordAuthentication(): PasswordAuthentication {
                 return PasswordAuthentication(username, password)
             }
@@ -103,13 +147,29 @@ class GestionePrestito {
         val message = MimeMessage(session).apply {
             setFrom(InternetAddress("Biblioteca ITIS volta <$username>"))
             addRecipient(Message.RecipientType.TO, InternetAddress(destinatario))
-            setSubject("Prestito Libro - Biblioteca")
-            setText(testoMail)
+            setSubject("Scadenza Prestito " + prestito.idPrestito)
+            setText(generateEmailMessage(utente.nome,libro.titolo,libro.autore,prestito.idPrestito))
         }
 
         Transport.send(message)
 
-    }*/
+    }
+
+    fun generateEmailMessage(nomeUtente: String, titoloLibro: String, autoreLibro: String, idPrestito: Int): String {
+        val sb = StringBuilder()
+        sb.append("Oggetto: Prestito scaduto\n\n")
+        sb.append("Gentile $nomeUtente,\n\n")
+        sb.append("Ti scriviamo per informarti che il tuo prestito presso la nostra biblioteca è scaduto e deve essere restituito immediatamente. Il materiale in prestito è il seguente:\n\n")
+        sb.append("Titolo: $titoloLibro\n")
+        sb.append("Autore: $autoreLibro\n")
+        sb.append("ID prestito: $idPrestito\n\n")
+        sb.append("Ti preghiamo di restituire il materiale il prima possibile\n")
+        sb.append("Se hai bisogno di rinnovare il prestito, fallo al più presto.\n\n")
+        sb.append("Cordiali saluti,\n\n")
+        sb.append("Biblioteca ITIS Volta")
+
+        return sb.toString()
+    }
 
 
 }
