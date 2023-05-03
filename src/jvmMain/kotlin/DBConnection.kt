@@ -67,6 +67,7 @@ class DBConnection {
         }
     }
 
+    //@TODO Controllo validità categorie e generi
     fun aggiungiLibro(libro: DatiLibro): String {
         try {
             val preparedStatement: PreparedStatement?
@@ -492,7 +493,7 @@ class DBConnection {
         return ""
     }
 
-    fun aggiornaPretito(prestito: Prestito): String {
+    fun aggiornaPrestito(prestito: Prestito): String {
         try {
             val preparedStatement: PreparedStatement?
             val query = "UPDATE prestiti SET " +

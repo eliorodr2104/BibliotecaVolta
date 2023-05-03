@@ -87,8 +87,7 @@ fun Routing.libri(db: DBConnection) {
         }
     }
 
-    //@TODO Stabilire come farlo andare
-    put("/libri/{isbn}") {
+    put("/libri") {
         try {
             val libro = call.receive<String>()
             println(db.aggiornaLibro(Json.decodeFromString(libro)))
@@ -119,8 +118,7 @@ fun Routing.copie(db: DBConnection) {
         }
     }
 
-    //@TODO Stabilire come farlo andare
-    put("copie/{idCopia}") {
+    put("/copie") {
         try {
             val copia = call.receive<String>()
             println(db.aggiornaCopia(Json.decodeFromString(copia)))
@@ -151,8 +149,7 @@ fun Routing.utenti(db: DBConnection) {
         }
     }
 
-    //@TODO Stabilire come farlo andare
-    put("/utenti/{idUtente}") {
+    put("/utenti") {
         try {
             val utente = call.receive<String>()
             println(db.aggiornaUtente(Json.decodeFromString(utente)))
@@ -183,11 +180,10 @@ fun Routing.prestiti(db: DBConnection) {
         }
     }
 
-    //@TODO Stabilire come farlo andare
-    put("prestiti/{idPrestito}") {
+    put("/prestiti") {
         try {
             val prestito = call.receive<String>()
-            println(db.aggiornaUtente(Json.decodeFromString(prestito)))
+            println(db.aggiornaPrestito(Json.decodeFromString(prestito)))
             call.respond(HttpStatusCode.OK, "prestito aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "prestito non trovato")
@@ -208,17 +204,17 @@ fun Routing.categorie(db: DBConnection) {
     post("/categorie") {
         try {
             val categoria = call.receive<String>()
-            println(db.aggiungiPrestito(Json.decodeFromString(categoria)))
+            println(db.aggiungiCategoria(Json.decodeFromString(categoria)))
             call.respond(HttpStatusCode.Created, "Nuova categoria creata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
     }
 
-    put("/categorie/{idCategoria}") {
+    put("/categorie") {
         try {
             val categoria = call.receive<String>()
-            println(db.aggiornaUtente(Json.decodeFromString(categoria)))
+            println(db.aggiornaCategoria(Json.decodeFromString(categoria)))
             call.respond(HttpStatusCode.OK, "categoria aggiornata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "categoria non trovata")
@@ -233,23 +229,23 @@ fun Routing.generi(db: DBConnection) {
     }
 
     get("/generi/{idGenere}") {
-        call.respondText(db.estraiCategoria(call.parameters["idGenere"]))
+        call.respondText(db.estraiGenere(call.parameters["idGenere"]))
     }
 
     post("/generi/{idGenere}") {
         try {
             val genere = call.receive<String>()
-            println(db.aggiungiPrestito(Json.decodeFromString(genere)))
+            println(db.aggiungiGenere(Json.decodeFromString(genere)))
             call.respond(HttpStatusCode.Created, "Nuovo genere creata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
     }
 
-    put("/generi/{idGenere}") {
+    put("/generi") {
         try {
             val genere = call.receive<String>()
-            println(db.aggiornaUtente(Json.decodeFromString(genere)))
+            println(db.aggiornaGenere(Json.decodeFromString(genere)))
             call.respond(HttpStatusCode.OK, "genere aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "genere non trovato")
