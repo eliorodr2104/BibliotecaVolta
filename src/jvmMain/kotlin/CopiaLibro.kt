@@ -7,9 +7,9 @@ import kotlinx.serialization.Serializable
  * @param idCopia: String
  * @param condizioni: String
  * @param prestito: Prestito
- * @param sezione: String
- * @param scaffale: Int
- * @param ripiano: Int
+ * @param sezione: String?
+ * @param scaffale: Int?
+ * @param ripiano: Int?
  * @param np: Int
  * @param idPrestito: Int
  */
@@ -19,8 +19,8 @@ data class CopiaLibro(
     var isbn: String,
     var condizioni: String,
     var inPrestito: Boolean,
-    val sezione: String,
-    val scaffale: Int,
-    val ripiano: Int,
+    val sezione: String?,
+    val scaffale: Int?,
+    val ripiano: Int?,
     val idPrestito: Int
 )

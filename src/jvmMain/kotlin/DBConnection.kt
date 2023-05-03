@@ -53,7 +53,7 @@ class DBConnection {
                     sottotitolo = rs.getString("Sottotitolo"),
                     lingua = rs.getString("Lingua"),
                     casaEditrice = rs.getString("CasaEditrice"),
-                    autore = rs.getString("IDAutore"),
+                    autore = rs.getString("Autore"),
                     annoPubblicazione = rs.getString("AnnoPubblicazione"),
                     idCategoria = rs.getInt("IDCategoria"),
                     idGenere = rs.getInt("IDGenere"),
@@ -192,7 +192,7 @@ class DBConnection {
                 sottotitolo = rs.getString("Sottotitolo"),
                 lingua = rs.getString("Lingua"),
                 casaEditrice = rs.getString("CasaEditrice"),
-                autore = rs.getString("IDAutore"),
+                autore = rs.getString("Autore"),
                 annoPubblicazione = rs.getString("AnnoPubblicazione"),
                 idCategoria = rs.getInt("IDCategoria"),
                 idGenere = rs.getInt("IDGenere"),
@@ -229,7 +229,6 @@ class DBConnection {
         try {
             val preparedStatement: PreparedStatement?
             val query = "INSERT INTO copie (" +
-                    "`IDCopia`, " +
                     "`ISBN`, " +
                     "`Condizioni`, " +
                     "`Sezione`, " +
@@ -238,17 +237,16 @@ class DBConnection {
                     "`Prestato`, " +
                     "`IDPrestito`, " +
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
-            preparedStatement?.setInt(1, getNextId("IDCopia", "copie"))
-            preparedStatement?.setString(2, copia.isbn)
-            preparedStatement?.setString(3, copia.condizioni)
-            preparedStatement?.setString(4, copia.sezione)
-            preparedStatement?.setInt(5, copia.scaffale)
-            preparedStatement?.setInt(6, copia.ripiano)
-            preparedStatement?.setBoolean(7, copia.inPrestito)
-            preparedStatement?.setInt(8, copia.idPrestito)
+            preparedStatement?.setString(1, copia.isbn)
+            preparedStatement?.setString(2, copia.condizioni)
+            preparedStatement?.setString(3, copia.sezione)
+            preparedStatement?.setInt(4, copia.scaffale ?: 0)
+            preparedStatement?.setInt(5, copia.ripiano ?: 0)
+            preparedStatement?.setBoolean(6, copia.inPrestito)
+            preparedStatement?.setInt(7, copia.idPrestito)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -282,8 +280,8 @@ class DBConnection {
             preparedStatement?.setString(1, copia.isbn)
             preparedStatement?.setString(2, copia.condizioni)
             preparedStatement?.setString(3, copia.sezione)
-            preparedStatement?.setInt(4, copia.scaffale)
-            preparedStatement?.setInt(5, copia.ripiano)
+            preparedStatement?.setInt(4, copia.scaffale ?: 0)
+            preparedStatement?.setInt(5, copia.ripiano ?: 0)
             preparedStatement?.setBoolean(6, copia.inPrestito)
             preparedStatement?.setInt(7, copia.idPrestito)
             preparedStatement?.setInt(8, copia.idCopia)
@@ -316,7 +314,7 @@ class DBConnection {
                     cognome = rs.getString("cognome"),
                     numero = rs.getString("numero"),
                     mailAlternativa = rs.getString("mailAlternativa"),
-                    grado = 0,
+                    grado = rs.getInt("GradoAccesso"),
                     nome = rs.getString("nome")
                 )
             )
@@ -334,7 +332,7 @@ class DBConnection {
                     cognome = rs.getString("cognome"),
                     numero = rs.getString("numero"),
                     mailAlternativa = rs.getString("mailAlternativa"),
-                    grado = 0,
+                    grado = rs.getInt("GradoAccesso"),
                     nome = rs.getString("nome")
                 )
             )
@@ -347,7 +345,6 @@ class DBConnection {
         try {
             val preparedStatement: PreparedStatement?
             val query = "INSERT INTO utenti (" +
-                    "`IDUtente`, " +
                     "`Mail`, " +
                     "`Nome`, " +
                     "`Cognome`, " +
@@ -355,16 +352,15 @@ class DBConnection {
                     "`MailAlternativa`, " +
                     "`GradoAccesso` " +
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    "VALUES (?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
-            preparedStatement?.setInt(1, getNextId("IDUtente", "utenti"))
-            preparedStatement?.setString(2, utente.mail)
-            preparedStatement?.setString(3, utente.nome)
-            preparedStatement?.setString(4, utente.cognome)
-            preparedStatement?.setString(5, utente.numero)
-            preparedStatement?.setString(6, utente.mailAlternativa)
-            preparedStatement?.setInt(7, utente.grado)
+            preparedStatement?.setString(1, utente.mail)
+            preparedStatement?.setString(2, utente.nome)
+            preparedStatement?.setString(3, utente.cognome)
+            preparedStatement?.setString(4, utente.numero)
+            preparedStatement?.setString(5, utente.mailAlternativa)
+            preparedStatement?.setInt(6, utente.grado)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -384,7 +380,7 @@ class DBConnection {
     fun aggiornaUtente(utente: Utente): String {
         try {
             val preparedStatement: PreparedStatement?
-            val query = "UPDATE copie SET " +
+            val query = "UPDATE utenti SET " +
                     "Mail = ?, " +
                     "Nome = ?, " +
                     "Cognome = ?, " +
@@ -463,8 +459,7 @@ class DBConnection {
     fun aggiungiPrestito(prestito: Prestito): String {
         try {
             val preparedStatement: PreparedStatement?
-            val query = "INSERT INTO utenti (" +
-                    "`IDPrestito`, " +
+            val query = "INSERT INTO prestiti (" +
                     "`IDCopia`, " +
                     "`IDUtente`, " +
                     "`Inizio`, " +
@@ -472,16 +467,15 @@ class DBConnection {
                     "`CondizioneIniziale`, " +
                     "`CondizioneFinale` " +
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    "VALUES (?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
-            preparedStatement?.setInt(1, getNextId("IDPrestito", "prestiti"))
-            preparedStatement?.setInt(2, prestito.idCopia)
-            preparedStatement?.setInt(3, prestito.idUtente)
-            preparedStatement?.setString(4, prestito.dataInizio)
-            preparedStatement?.setString(5, prestito.dataFine)
-            preparedStatement?.setString(6, prestito.condizioneIniziale)
-            preparedStatement?.setString(7, prestito.condizioneFinale)
+            preparedStatement?.setInt(1, prestito.idCopia)
+            preparedStatement?.setInt(2, prestito.idUtente)
+            preparedStatement?.setString(3, prestito.dataInizio)
+            preparedStatement?.setString(4, prestito.dataFine)
+            preparedStatement?.setString(5, prestito.condizioneIniziale)
+            preparedStatement?.setString(6, prestito.condizioneFinale)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -501,7 +495,7 @@ class DBConnection {
     fun aggiornaPretito(prestito: Prestito): String {
         try {
             val preparedStatement: PreparedStatement?
-            val query = "UPDATE copie SET " +
+            val query = "UPDATE prestiti SET " +
                     "IDCopia = ?, " +
                     "IDUtente = ?, " +
                     "Inizio = ?, " +
@@ -535,13 +529,176 @@ class DBConnection {
     }
 
 
-    //UTILS
-    private fun getNextId(key: String, table: String): Int {
-        val result = estrai("SELECT MAX($key) FROM $table")
-        result.next()
-        return result.getInt(1) + 1
+    //categorie
+    fun estraiCategorie(): String {
+        val arr = ArrayList<Categoria>()
+        // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+        val rs = estrai("SELECT * FROM categorie")
+        //aggiunge tutti gli elementi trovati a un arraylist
+        while (rs.next()) {
+            arr.add(
+                Categoria(
+                    idCategoria = rs.getInt("IDCategoria"),
+                    nome = rs.getString("NomeCategoria")
+                )
+            )
+        }
+        return Json.encodeToString(arr)
     }
 
+    fun estraiCategoria(idCategoria: String?): String {
+        return try {
+            val rs = estrai("SELECT * FROM categorie WHERE IDCategoria=$idCategoria")
+            rs.next()
+            Json.encodeToString(
+                Categoria(
+                    idCategoria = rs.getInt("IDCategoria"),
+                    nome = rs.getString("NomeCategoria")
+                )
+            )
+        } catch (e: Exception) {
+            e.message ?: ""
+        }
+    }
+
+    fun aggiungiCategoria(categoria: Categoria): String {
+        try {
+            val preparedStatement: PreparedStatement?
+            val query = "INSERT INTO categorie (" +
+                    "`NomeCategoria` " +
+                    ") " +
+                    "VALUES (?)"
+
+            preparedStatement = conn.prepareStatement(query)
+            preparedStatement?.setString(1, categoria.nome)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Inserimento riuscito"
+                } else {
+                    "Inserimento fallito"
+                }
+            }
+        } catch (e: SQLException) {
+            return e.message ?: ""
+        }
+        return ""
+    }
+
+    fun aggiornaCategoria(categoria: Categoria): String {
+        try {
+            val preparedStatement: PreparedStatement?
+            val query = "UPDATE categorie SET " +
+                    "NomeCategoria = ? " +
+                    "WHERE IDCategoria = ?"
+
+            preparedStatement = conn.prepareStatement(query)
+            preparedStatement?.setString(1, categoria.nome)
+            preparedStatement?.setInt(2, categoria.idCategoria)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Modifica riuscita"
+                } else {
+                    "Nessuna copia modificata"
+                }
+            }
+        } catch (e: SQLException) {
+            return e.message ?: ""
+        }
+        return ""
+    }
+
+
+    //GENERI
+    fun estraiGeneri(): String {
+        val arr = ArrayList<Genere>()
+        // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+        val rs = estrai("SELECT * FROM generi")
+        //aggiunge tutti gli elementi trovati a un arraylist
+        while (rs.next()) {
+            arr.add(
+                Genere(
+                    idGenere = rs.getInt("IDgenere"),
+                    nome = rs.getString("NomeGenere")
+                )
+            )
+        }
+        return Json.encodeToString(arr)
+    }
+
+    fun estraiGenere(idGenere: String?): String {
+        return try {
+            val rs = estrai("SELECT * FROM genere WHERE IDGenere=$idGenere")
+            rs.next()
+            Json.encodeToString(
+                Genere(
+                    idGenere = rs.getInt("IDGenere"),
+                    nome = rs.getString("NomeGenere")
+                )
+            )
+        } catch (e: Exception) {
+            e.message ?: ""
+        }
+    }
+
+    fun aggiungiGenere(genere: Genere): String {
+        try {
+            val preparedStatement: PreparedStatement?
+            val query = "INSERT INTO generi (" +
+                    "`NomeGenere` " +
+                    ") " +
+                    "VALUES (?)"
+
+            preparedStatement = conn.prepareStatement(query)
+            preparedStatement?.setString(1, genere.nome)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Inserimento riuscito"
+                } else {
+                    "Inserimento fallito"
+                }
+            }
+        } catch (e: SQLException) {
+            return e.message ?: ""
+        }
+        return ""
+    }
+
+    fun aggiornaGenere(genere: Genere): String {
+        try {
+            val preparedStatement: PreparedStatement?
+            val query = "UPDATE generi SET " +
+                    "NomeGenere = ? " +
+                    "WHERE IDgenere = ?"
+
+            preparedStatement = conn.prepareStatement(query)
+            preparedStatement?.setString(1, genere.nome)
+            preparedStatement?.setInt(2, genere.idGenere)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected != null) {
+                return if (rowsAffected > 0) {
+                    "Modifica riuscita"
+                } else {
+                    "Nessuna copia modificata"
+                }
+            }
+        } catch (e: SQLException) {
+            return e.message ?: ""
+        }
+        return ""
+    }
+
+    //UTILS
     private fun estrai(query: String): ResultSet {
         return conn.createStatement().executeQuery(query)
     }

@@ -113,7 +113,7 @@ fun Routing.copie(db: DBConnection) {
         try {
             val copia = call.receive<String>()
             println(db.aggiungiCopia(Json.decodeFromString(copia)))
-            call.respond(HttpStatusCode.Created, "Nuova copia creato con successo")
+            call.respond(HttpStatusCode.Created, "Nuova copia creata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
@@ -124,7 +124,7 @@ fun Routing.copie(db: DBConnection) {
         try {
             val copia = call.receive<String>()
             println(db.aggiornaCopia(Json.decodeFromString(copia)))
-            call.respond(HttpStatusCode.OK, "Copia aggiornato con successo")
+            call.respond(HttpStatusCode.OK, "Copia aggiornata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "Copia non trovato")
         }
@@ -156,9 +156,9 @@ fun Routing.utenti(db: DBConnection) {
         try {
             val utente = call.receive<String>()
             println(db.aggiornaUtente(Json.decodeFromString(utente)))
-            call.respond(HttpStatusCode.OK, "Copia aggiornato con successo")
+            call.respond(HttpStatusCode.OK, "utente aggiornato con successo")
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.NotFound, "Copia non trovato")
+            call.respond(HttpStatusCode.NotFound, "utente non trovato")
         }
     }
 }
@@ -177,7 +177,7 @@ fun Routing.prestiti(db: DBConnection) {
         try {
             val prestito = call.receive<String>()
             println(db.aggiungiPrestito(Json.decodeFromString(prestito)))
-            call.respond(HttpStatusCode.Created, "Nuovo utente creato con successo")
+            call.respond(HttpStatusCode.Created, "Nuovo prestito creato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
@@ -186,64 +186,74 @@ fun Routing.prestiti(db: DBConnection) {
     //@TODO Stabilire come farlo andare
     put("prestiti/{idPrestito}") {
         try {
-            val utente = call.receive<String>()
-            println(db.aggiornaUtente(Json.decodeFromString(utente)))
-            call.respond(HttpStatusCode.OK, "Copia aggiornato con successo")
+            val prestito = call.receive<String>()
+            println(db.aggiornaUtente(Json.decodeFromString(prestito)))
+            call.respond(HttpStatusCode.OK, "prestito aggiornato con successo")
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.NotFound, "Copia non trovato")
+            call.respond(HttpStatusCode.NotFound, "prestito non trovato")
         }
     }
 }
 
 
-//@TODO implementare la gesione delle categorie (get, getID, post, put) -> C4V4H.exe
 fun Routing.categorie(db: DBConnection) {
     get("/categorie") {
-        call.respondText("JSON contenente tutte le categorie")
+        call.respond(db.estraiCategorie())
     }
 
     get("/categorie/{idCategoria}") {
-        call.respondText("JSON contenente la categoria con ID ${call.parameters["idCategoria"]}")
+        call.respondText(db.estraiCategoria(call.parameters["idCategoria"]))
     }
 
-    post("/categorie/{idCategoria}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni la categoria con ID ${call.parameters["idCategoria"]} aggiunte con successo"
-        )
+    post("/categorie") {
+        try {
+            val categoria = call.receive<String>()
+            println(db.aggiungiPrestito(Json.decodeFromString(categoria)))
+            call.respond(HttpStatusCode.Created, "Nuova categoria creata con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
+        }
     }
 
     put("/categorie/{idCategoria}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni la categoria con ID ${call.parameters["idCategoria"]} aggiornate con successo"
-        )
+        try {
+            val categoria = call.receive<String>()
+            println(db.aggiornaUtente(Json.decodeFromString(categoria)))
+            call.respond(HttpStatusCode.OK, "categoria aggiornata con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "categoria non trovata")
+        }
     }
 }
 
 
-//@TODO implementare la gesione dei generi (get, getID, post, put) -> C4V4H.exe
 fun Routing.generi(db: DBConnection) {
     get("/generi") {
-        call.respondText("JSON contenente tutti i generi")
+        call.respond(db.estraiGeneri())
     }
 
     get("/generi/{idGenere}") {
-        call.respondText("JSON contenente il genere con ID ${call.parameters["idGenere"]}")
+        call.respondText(db.estraiCategoria(call.parameters["idGenere"]))
     }
 
     post("/generi/{idGenere}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni del genere con ID ${call.parameters["idGenere"]} aggiunte con successo"
-        )
+        try {
+            val genere = call.receive<String>()
+            println(db.aggiungiPrestito(Json.decodeFromString(genere)))
+            call.respond(HttpStatusCode.Created, "Nuovo genere creata con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
+        }
     }
 
     put("/generi/{idGenere}") {
-        call.respond(
-            HttpStatusCode.OK,
-            "Informazioni del genere con ID ${call.parameters["idGenere"]} aggiornate con successo"
-        )
+        try {
+            val genere = call.receive<String>()
+            println(db.aggiornaUtente(Json.decodeFromString(genere)))
+            call.respond(HttpStatusCode.OK, "genere aggiornato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.NotFound, "genere non trovato")
+        }
     }
 }
 
