@@ -1,5 +1,7 @@
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
+import java.lang.IllegalArgumentException
 import java.sql.*
 import kotlin.collections.ArrayList
 
@@ -95,8 +97,8 @@ class DBConnection {
             preparedStatement?.setString(5, libro.casaEditrice)
             preparedStatement?.setString(6, libro.autore)
             preparedStatement?.setString(7, libro.annoPubblicazione)
-            preparedStatement?.setInt(8, libro.idCategoria)
-            preparedStatement?.setInt(9, libro.idGenere)
+            preparedStatement?.setInt(8, verificaPK(libro.idCategoria, "categorie", "IDCategoria"))
+            preparedStatement?.setInt(9, verificaPK(libro.idGenere, "generi", "IDGenere"))
             preparedStatement?.setString(10, libro.descrizione)
             preparedStatement?.setInt(11, libro.np)
             preparedStatement?.setString(12, libro.image)
@@ -110,11 +112,12 @@ class DBConnection {
                     "Inserimento fallito"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
     }
+
 
     fun aggiornaLibro(libro: DatiLibro): String {
         try {
@@ -139,8 +142,8 @@ class DBConnection {
             preparedStatement?.setString(4, libro.casaEditrice)
             preparedStatement?.setString(5, libro.autore)
             preparedStatement?.setString(6, libro.annoPubblicazione)
-            preparedStatement?.setInt(7, libro.idCategoria)
-            preparedStatement?.setInt(8, libro.idGenere)
+            preparedStatement?.setInt(7, verificaPK(libro.idCategoria, "categorie", "IDCategoria"))
+            preparedStatement?.setInt(8, verificaPK(libro.idGenere, "generi", "IDGenere"))
             preparedStatement?.setString(9, libro.descrizione)
             preparedStatement?.setInt(10, libro.np)
             preparedStatement?.setString(11, libro.image)
@@ -156,7 +159,7 @@ class DBConnection {
                     "Aggiornamento fallito"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -247,7 +250,7 @@ class DBConnection {
             preparedStatement?.setInt(4, copia.scaffale ?: 0)
             preparedStatement?.setInt(5, copia.ripiano ?: 0)
             preparedStatement?.setBoolean(6, copia.inPrestito)
-            preparedStatement?.setInt(7, copia.idPrestito)
+            preparedStatement?.setInt(7, verificaPK(copia.idPrestito, "prestiti", "IDPrestito"))
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -258,7 +261,7 @@ class DBConnection {
                     "Inserimento fallito"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -284,7 +287,7 @@ class DBConnection {
             preparedStatement?.setInt(4, copia.scaffale ?: 0)
             preparedStatement?.setInt(5, copia.ripiano ?: 0)
             preparedStatement?.setBoolean(6, copia.inPrestito)
-            preparedStatement?.setInt(7, copia.idPrestito)
+            preparedStatement?.setInt(7, verificaPK(copia.idPrestito, "prestiti", "IDPrestito"))
             preparedStatement?.setInt(8, copia.idCopia)
 
             val rowsAffected = preparedStatement?.executeUpdate()
@@ -296,7 +299,7 @@ class DBConnection {
                     "Nessuna copia modificata"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -372,7 +375,7 @@ class DBConnection {
                     "Inserimento fallito"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -408,7 +411,7 @@ class DBConnection {
                     "Nessuna copia modificata"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -471,8 +474,8 @@ class DBConnection {
                     "VALUES (?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
-            preparedStatement?.setInt(1, prestito.idCopia)
-            preparedStatement?.setInt(2, prestito.idUtente)
+            preparedStatement?.setInt(1, verificaPK(prestito.idCopia, "copie", "IDCopia"))
+            preparedStatement?.setInt(2, verificaPK(prestito.idUtente, "utenti", "IDUtente"))
             preparedStatement?.setString(3, prestito.dataInizio)
             preparedStatement?.setString(4, prestito.dataFine)
             preparedStatement?.setString(5, prestito.condizioneIniziale)
@@ -487,7 +490,8 @@ class DBConnection {
                     "Inserimento fallito"
                 }
             }
-        } catch (e: SQLException) {
+            togglePrestitoCopia(prestito, true)
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -506,8 +510,8 @@ class DBConnection {
                     "WHERE IDPrestito = ?"
 
             preparedStatement = conn.prepareStatement(query)
-            preparedStatement?.setInt(1, prestito.idCopia)
-            preparedStatement?.setInt(2, prestito.idUtente)
+            preparedStatement?.setInt(1, verificaPK(prestito.idCopia, "copie", "IDCopia"))
+            preparedStatement?.setInt(2, verificaPK(prestito.idUtente, "utenti", "IDUtente"))
             preparedStatement?.setString(3, prestito.dataInizio)
             preparedStatement?.setString(4, prestito.dataFine)
             preparedStatement?.setString(5, prestito.condizioneIniziale)
@@ -523,7 +527,7 @@ class DBConnection {
                     "Nessuna copia modificata"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -582,7 +586,7 @@ class DBConnection {
                     "Inserimento fallito"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -608,7 +612,7 @@ class DBConnection {
                     "Nessuna copia modificata"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -667,7 +671,7 @@ class DBConnection {
                     "Inserimento fallito"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -693,7 +697,7 @@ class DBConnection {
                     "Nessuna copia modificata"
                 }
             }
-        } catch (e: SQLException) {
+        } catch (e: Exception) {
             return e.message ?: ""
         }
         return ""
@@ -704,6 +708,31 @@ class DBConnection {
         return conn.createStatement().executeQuery(query)
     }
 
+    fun togglePrestitoCopia(prestito: Prestito, bool: Boolean){
+        val copia = GestioneJSON().getCopiaFromString(estraiCopia(verificaPK(prestito.idCopia, "copie", "IDCopia").toString()))
+        copia.inPrestito = bool
+        if(bool)
+            copia.idPrestito = getMax("prestiti", "IDPrestito")
+        else
+            copia.idPrestito = -1
+        aggiornaCopia(copia)
+    }
+    private fun verificaPK(id: Int, table: String, nomePK: String): Int{
+        val sql = "SELECT $nomePK FROM $table WHERE $nomePK = ?"
+        val preparedStatement = conn.prepareStatement(sql)
+        preparedStatement.setInt(1, id)
+        if (!preparedStatement.executeQuery().next() && id != -1)
+            throw IllegalArgumentException("\"$nomePK\" con valore \"$id\" assente nella tabella \"$table\"")
+        return id
+    }
+
+    private fun getMax(table: String, nomePK: String): Int{
+        val rs = estrai("SELECT MAX($nomePK) FROM $table")
+        if (rs.next()) {
+            return rs.getInt(nomePK)
+        }
+        return 1
+    }
     fun close() {
         conn.close()
     }

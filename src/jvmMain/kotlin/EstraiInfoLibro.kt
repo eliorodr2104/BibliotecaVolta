@@ -53,8 +53,16 @@ class EstraiInfoLibro {
             idGenere = -1,
             descrizione = volumeInfo["description"] as String?,
             np = volumeInfo["pageCount"].toString().toInt(),
-            image = imageLink["thumbnail"] as String
+            image = setupIMG(imageLink["thumbnail"] as String)
         )
+    }
+
+    private fun setupIMG(url: String): String{
+        val arr = url.split("://")
+        return if(arr[0] == "https")
+            url
+        else
+            "${arr[0]}://${arr[1]}"
     }
 }
 

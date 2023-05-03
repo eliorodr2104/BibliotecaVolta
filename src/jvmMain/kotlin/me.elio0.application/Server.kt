@@ -1,6 +1,7 @@
 package me.elio0.application
 
 import DBConnection
+import EstraiInfoLibro
 import GestioneJSON
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -33,6 +34,8 @@ fun HTML.index() {
 }
 
 fun main() {
+    //@TODO ermanno qui mette la gesione del prestito
+
     val environment = applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
         connector {
@@ -58,6 +61,7 @@ fun Application.module() {
 fun Application.biblioteca() {
     val db = DBConnection()
     routing {
+        api()
         libri(db)
         utenti(db)
         copie(db)
@@ -67,6 +71,15 @@ fun Application.biblioteca() {
     }
 }
 
+fun Routing.api(){
+    get ("API/{isbn}"){
+        try {
+            call.respondText(GestioneJSON().getJsonString(EstraiInfoLibro().ricercaLibro(call.parameters["isbn"] ?: "")))
+        }catch (e:Exception){
+            call.respondText(e.message ?: "")
+        }
+    }
+}
 
 fun Routing.libri(db: DBConnection) {
     get("/libri") {
@@ -94,6 +107,16 @@ fun Routing.libri(db: DBConnection) {
             call.respond(HttpStatusCode.OK, "Libro aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "Libro non trovato")
+        }
+    }
+
+    delete ("/libri/{isbn}"){
+        try {
+            val libro = call.receive<String>()
+            println(db.aggiungiLibro(Json.decodeFromString(libro)))
+            call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
     }
 }
