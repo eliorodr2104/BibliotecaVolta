@@ -22,6 +22,5 @@ data class CopiaLibro(
     val sezione: String,
     val scaffale: Int,
     val ripiano: Int,
-    val np: Int,
     val idPrestito: Int
 )

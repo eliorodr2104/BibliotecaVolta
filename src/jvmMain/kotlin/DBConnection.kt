@@ -34,7 +34,8 @@ class DBConnection {
                     idCategoria = rs.getInt("IDCategoria"),
                     idGenere = rs.getInt("IDGenere"),
                     descrizione = rs.getString("Descrizione"),
-                    null
+                    np = rs.getInt("NumeroPagine"),
+                    image = rs.getString("Immagine")
                 )
             )
         }
@@ -57,7 +58,8 @@ class DBConnection {
                     idCategoria = rs.getInt("IDCategoria"),
                     idGenere = rs.getInt("IDGenere"),
                     descrizione = rs.getString("Descrizione"),
-                    null
+                    np = rs.getInt("NumeroPagine"),
+                    image = rs.getString("Immagine")
                 )
             )
         } catch (e: Exception) {
@@ -79,9 +81,10 @@ class DBConnection {
                     "`IDCategoria`, " + //Int
                     "`IDGenere`, " + //Int
                     "`Descrizione`, " + //String
+                    "`NumeroPagine`, " + //String
                     "`Immagine`" + //bytes
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
             preparedStatement?.setString(1, libro.isbn)
@@ -94,7 +97,8 @@ class DBConnection {
             preparedStatement?.setInt(8, libro.idCategoria)
             preparedStatement?.setInt(9, libro.idGenere)
             preparedStatement?.setString(10, libro.descrizione)
-            preparedStatement?.setString(11, libro.image)
+            preparedStatement?.setInt(11, libro.np)
+            preparedStatement?.setString(12, libro.image)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -124,6 +128,7 @@ class DBConnection {
                     "IDCategoria = ?, " +
                     "IDGenere = ?, " +
                     "Descrizione = ?, " +
+                    "NumeroPagine = ?, " +
                     "Immagine = ? " +
                     "WHERE ISBN = ?"
             preparedStatement = conn.prepareStatement(query)
@@ -136,8 +141,9 @@ class DBConnection {
             preparedStatement?.setInt(7, libro.idCategoria)
             preparedStatement?.setInt(8, libro.idGenere)
             preparedStatement?.setString(9, libro.descrizione)
-            preparedStatement?.setString(10, libro.image)
-            preparedStatement?.setString(11, libro.isbn)
+            preparedStatement?.setInt(10, libro.np)
+            preparedStatement?.setString(11, libro.image)
+            preparedStatement?.setString(12, libro.isbn)
 
 
             val rowsAffected = preparedStatement?.executeUpdate()
@@ -173,7 +179,6 @@ class DBConnection {
                     sezione = rs.getString("Sezione"),
                     scaffale = rs.getInt("Scaffale"),
                     ripiano = rs.getInt("Ripiano"),
-                    np = rs.getInt("NumeroPagine"),
                     idPrestito = rs.getInt("IDPrestito")
                 )
             )
@@ -193,6 +198,7 @@ class DBConnection {
                 idGenere = rs.getInt("IDGenere"),
                 copie = arr,
                 descrizione = rs.getString("Descrizione"),
+                np = rs.getInt("NumeroPagine"),
                 image = null
             )
         )
@@ -211,7 +217,6 @@ class DBConnection {
                     sezione = rs.getString("Sezione"),
                     scaffale = rs.getInt("Scaffale"),
                     ripiano = rs.getInt("Ripiano"),
-                    np = rs.getInt("NumeroPagine"),
                     idPrestito = rs.getInt("IDPrestito")
                 )
             )
@@ -230,7 +235,6 @@ class DBConnection {
                     "`Sezione`, " +
                     "`Scaffale`, " +
                     "`Ripiano`, " +
-                    "`NumeroPagine`, " +
                     "`Prestato`, " +
                     "`IDPrestito`, " +
                     ") " +
@@ -243,9 +247,8 @@ class DBConnection {
             preparedStatement?.setString(4, copia.sezione)
             preparedStatement?.setInt(5, copia.scaffale)
             preparedStatement?.setInt(6, copia.ripiano)
-            preparedStatement?.setInt(7, copia.np)
-            preparedStatement?.setBoolean(8, copia.inPrestito)
-            preparedStatement?.setInt(9, copia.idPrestito)
+            preparedStatement?.setBoolean(7, copia.inPrestito)
+            preparedStatement?.setInt(8, copia.idPrestito)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -271,7 +274,6 @@ class DBConnection {
                     "Sezione = ?, " +
                     "Scaffale = ?, " +
                     "Ripiano = ?, " +
-                    "NumeroPagine = ?, " +
                     "Prestato = ?, " +
                     "IDPrestito = ? " +
                     "WHERE IDCopia = ?"
@@ -282,10 +284,9 @@ class DBConnection {
             preparedStatement?.setString(3, copia.sezione)
             preparedStatement?.setInt(4, copia.scaffale)
             preparedStatement?.setInt(5, copia.ripiano)
-            preparedStatement?.setInt(6, copia.np)
-            preparedStatement?.setBoolean(7, copia.inPrestito)
-            preparedStatement?.setInt(8, copia.idPrestito)
-            preparedStatement?.setInt(9, copia.idCopia)
+            preparedStatement?.setBoolean(6, copia.inPrestito)
+            preparedStatement?.setInt(7, copia.idPrestito)
+            preparedStatement?.setInt(8, copia.idCopia)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 

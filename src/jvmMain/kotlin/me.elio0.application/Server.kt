@@ -3,7 +3,6 @@ package me.elio0.application
 import DBConnection
 import GestioneJSON
 import io.ktor.http.*
-import io.ktor.network.tls.certificates.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
@@ -16,7 +15,6 @@ import kotlinx.html.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
-import java.io.File
 
 
 fun HTML.index() {
@@ -34,7 +32,6 @@ fun HTML.index() {
     }
 }
 
-
 fun main() {
     val environment = applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
@@ -43,7 +40,6 @@ fun main() {
         }
         module(Application::module)
     }
-
 
     embeddedServer(Netty, environment).start(wait = true)
 }

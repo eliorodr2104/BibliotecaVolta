@@ -52,6 +52,7 @@ class EstraiInfoLibro {
             idCategoria = -1,
             idGenere = -1,
             descrizione = volumeInfo["description"] as String?,
+            np = volumeInfo["pageCount"] as Int,
             image = imageLink["thumbnail"] as String
         )
     }
