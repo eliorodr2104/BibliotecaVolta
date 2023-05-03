@@ -7,6 +7,8 @@ import org.json.simple.parser.JSONParser
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import com.google.gson.Gson
+
 
 /**
  * @author C4V4H.exe
@@ -70,6 +72,11 @@ class GestioneJSON {
     fun getJsonString(any: DatiLibro): String{
         return Json.encodeToString(any)
     }
+
+    fun getCopiaFromString(copia: String):CopiaLibro{
+        return Gson().fromJson(copia, CopiaLibro::class.java)
+    }
+
 }
     /*
      * Metodo per fare test, che crea un oggetto libro completo e lo returna
