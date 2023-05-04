@@ -733,17 +733,17 @@ class DBConnection {
     }
 
     private fun verificaPKfromList(id: ArrayList<Int>): String {
-        val sql = "SELECT IDCategoria FROM categorie WHERE IDCategoria = ?"
-        val preparedStatement = conn.prepareStatement(sql)
-        preparedStatement.setString(1, id.toString())
-        for (i in id.indices){
+        for (i in id.indices) {
+            val preparedStatement = conn.prepareStatement("SELECT IDCategoria FROM categorie WHERE IDCategoria = ?")
+            preparedStatement.setString(1, id[i].toString())
+
             if (!preparedStatement.executeQuery().next() && id[i] != -1)
-                throw IllegalArgumentException("\"IDCategoria\" con valore \"$id\" assente nella tabella \"Categorie\"")
+                throw IllegalArgumentException("\"IDCategorie\" con valore \"${id[i]}\" assente nella tabella \"Categorie\"")
         }
         return id.toString()
     }
 
-    private fun listToArrayList(list: List<String>): ArrayList<Int>{
+    private fun listToArrayList(list: List<String>): ArrayList<Int> {
         val arr = ArrayList<Int>()
         for (i in list.indices)
             arr.add(list[i].toInt())
@@ -758,9 +758,9 @@ class DBConnection {
         }
         return 1
     }
-/*
-    fun close() {
-        conn.close()
-    }
-*/
+    /*
+        fun close() {
+            conn.close()
+        }
+    */
 }
