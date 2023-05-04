@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * @param casaEditrice: String
  * @param autore: String
  * @param annoPubblicazione: String
- * @param idCategoria: String
+ * @param idCategorie: ArrayList<Int>
  * @param idGenere: String
  * @param descrizione: String
  * @param np: Int
@@ -26,7 +26,7 @@ data class DatiLibro(
     val casaEditrice: String?,
     val autore: String,
     val annoPubblicazione: String?,
-    val idCategoria: Int,
+    val idCategorie: ArrayList<Int>,
     val idGenere: Int,
     val descrizione: String?,
     val np: Int,

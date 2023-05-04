@@ -23,7 +23,7 @@ class EstraiInfoLibro {
      * @return libro il libro trovato
      */
     fun ricercaLibro(isbn: String): DatiLibro {
-        if(isbn == ""){
+        if (isbn == "") {
             throw InvalidIsbnException("Isbn non valido")
         }
         //Api Key generata con l'account lorenzo.cavallero@volta-alessandria.it
@@ -49,7 +49,7 @@ class EstraiInfoLibro {
             casaEditrice = volumeInfo["publisher"] as String?,
             autore = (volumeInfo["authors"] as JSONArray?)?.joinToString(" - ") { it as String } ?: "",
             annoPubblicazione = volumeInfo["publishedDate"] as String?,
-            idCategoria = -1,
+            idCategorie = arrayListOf(-1),
             idGenere = -1,
             descrizione = volumeInfo["description"] as String?,
             np = volumeInfo["pageCount"].toString().toInt(),
@@ -57,9 +57,11 @@ class EstraiInfoLibro {
         )
     }
 
-    private fun setupIMG(url: String): String{
+    private fun setupIMG(url: String): String {
+        if (url == "")
+            return "https://edu.lnf.infn.it/wp-content/uploads/2014/09/book_placeholder.gif"
         val arr = url.split("://")
-        return if(arr[0] == "https")
+        return if (arr[0] == "https")
             url
         else
             "${arr[0]}://${arr[1]}"
