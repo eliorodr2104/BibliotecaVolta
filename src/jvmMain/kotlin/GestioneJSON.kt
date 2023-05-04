@@ -76,7 +76,6 @@ class GestioneJSON {
     fun getCopiaFromString(copia: String):CopiaLibro{
         return Gson().fromJson(copia, CopiaLibro::class.java)
     }
-
 }
     /*
      * Metodo per fare test, che crea un oggetto libro completo e lo returna

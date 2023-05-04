@@ -1,6 +1,5 @@
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
 import java.lang.IllegalArgumentException
 import java.sql.*
 import kotlin.collections.ArrayList
@@ -14,7 +13,6 @@ class DBConnection {
     init {
         conn = DriverManager.getConnection(url, username, password)
     }
-
 
 
     //LIBRI
@@ -33,7 +31,7 @@ class DBConnection {
                     casaEditrice = rs.getString("CasaEditrice"),
                     autore = rs.getString("Autore"),
                     annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                    idCategoria = rs.getInt("IDCategoria"),
+                    idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
                     idGenere = rs.getInt("IDGenere"),
                     descrizione = rs.getString("Descrizione"),
                     np = rs.getInt("NumeroPagine"),
@@ -57,7 +55,7 @@ class DBConnection {
                     casaEditrice = rs.getString("CasaEditrice"),
                     autore = rs.getString("Autore"),
                     annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                    idCategoria = rs.getInt("IDCategoria"),
+                    idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
                     idGenere = rs.getInt("IDGenere"),
                     descrizione = rs.getString("Descrizione"),
                     np = rs.getInt("NumeroPagine"),
@@ -97,7 +95,7 @@ class DBConnection {
             preparedStatement?.setString(5, libro.casaEditrice)
             preparedStatement?.setString(6, libro.autore)
             preparedStatement?.setString(7, libro.annoPubblicazione)
-            preparedStatement?.setInt(8, verificaPK(libro.idCategoria, "categorie", "IDCategoria"))
+            preparedStatement?.setString(8, verificaPKfromList(libro.idCategorie))
             preparedStatement?.setInt(9, verificaPK(libro.idGenere, "generi", "IDGenere"))
             preparedStatement?.setString(10, libro.descrizione)
             preparedStatement?.setInt(11, libro.np)
@@ -142,7 +140,7 @@ class DBConnection {
             preparedStatement?.setString(4, libro.casaEditrice)
             preparedStatement?.setString(5, libro.autore)
             preparedStatement?.setString(6, libro.annoPubblicazione)
-            preparedStatement?.setInt(7, verificaPK(libro.idCategoria, "categorie", "IDCategoria"))
+            preparedStatement?.setString(7, verificaPKfromList(libro.idCategorie))
             preparedStatement?.setInt(8, verificaPK(libro.idGenere, "generi", "IDGenere"))
             preparedStatement?.setString(9, libro.descrizione)
             preparedStatement?.setInt(10, libro.np)
@@ -164,7 +162,6 @@ class DBConnection {
         }
         return ""
     }
-
 
 
     //COPIE
@@ -198,7 +195,7 @@ class DBConnection {
                 casaEditrice = rs.getString("CasaEditrice"),
                 autore = rs.getString("Autore"),
                 annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                idCategoria = rs.getInt("IDCategoria"),
+                idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
                 idGenere = rs.getInt("IDGenere"),
                 copie = arr,
                 descrizione = rs.getString("Descrizione"),
@@ -551,19 +548,26 @@ class DBConnection {
         return Json.encodeToString(arr)
     }
 
-    fun estraiCategoria(idCategoria: String?): String {
+    fun estraiCategorie(str: String): String {
+        val arr: List<String>
+        val ris = ArrayList<String>()
         return try {
-            val rs = estrai("SELECT * FROM categorie WHERE IDCategoria=$idCategoria")
-            rs.next()
-            Json.encodeToString(
-                Categoria(
-                    idCategoria = rs.getInt("IDCategoria"),
-                    nome = rs.getString("NomeCategoria")
+            arr = str.split(",")
+            for (i in arr.indices) {
+                ris.add(
+                    estraiCategoria(arr[i])
                 )
-            )
+            }
+            Json.encodeToString(ris)
         } catch (e: Exception) {
             e.message ?: ""
         }
+    }
+
+    private fun estraiCategoria(idCategoria: String?): String {
+        val rs = estrai("SELECT NomeCategoria FROM categorie WHERE IDCategoria=$idCategoria")
+        rs.next()
+        return rs.getString("NomeCategoria")
     }
 
     fun aggiungiCategoria(categoria: Categoria): String {
@@ -708,16 +712,18 @@ class DBConnection {
         return conn.createStatement().executeQuery(query)
     }
 
-    fun togglePrestitoCopia(prestito: Prestito, bool: Boolean){
-        val copia = GestioneJSON().getCopiaFromString(estraiCopia(verificaPK(prestito.idCopia, "copie", "IDCopia").toString()))
+    fun togglePrestitoCopia(prestito: Prestito, bool: Boolean) {
+        val copia =
+            GestioneJSON().getCopiaFromString(estraiCopia(verificaPK(prestito.idCopia, "copie", "IDCopia").toString()))
         copia.inPrestito = bool
-        if(bool)
-            copia.idPrestito = getMax("prestiti", "IDPrestito")
+        if (bool)
+            copia.idPrestito = getMax()
         else
             copia.idPrestito = -1
         aggiornaCopia(copia)
     }
-    private fun verificaPK(id: Int, table: String, nomePK: String): Int{
+
+    private fun verificaPK(id: Int, table: String, nomePK: String): Int {
         val sql = "SELECT $nomePK FROM $table WHERE $nomePK = ?"
         val preparedStatement = conn.prepareStatement(sql)
         preparedStatement.setInt(1, id)
@@ -726,15 +732,35 @@ class DBConnection {
         return id
     }
 
-    private fun getMax(table: String, nomePK: String): Int{
-        val rs = estrai("SELECT MAX($nomePK) FROM $table")
+    private fun verificaPKfromList(id: ArrayList<Int>): String {
+        val sql = "SELECT IDCategoria FROM categorie WHERE IDCategoria = ?"
+        val preparedStatement = conn.prepareStatement(sql)
+        preparedStatement.setString(1, id.toString())
+        for (i in id.indices){
+            if (!preparedStatement.executeQuery().next() && id[i] != -1)
+                throw IllegalArgumentException("\"IDCategoria\" con valore \"$id\" assente nella tabella \"Categorie\"")
+        }
+        return id.toString()
+    }
+
+    private fun listToArrayList(list: List<String>): ArrayList<Int>{
+        val arr = ArrayList<Int>()
+        for (i in list.indices)
+            arr.add(list[i].toInt())
+        return arr
+    }
+
+
+    private fun getMax(): Int {
+        val rs = estrai("SELECT MAX(IDPrestito) FROM prestiti")
         if (rs.next()) {
-            return rs.getInt(nomePK)
+            return rs.getInt("IDPrestito")
         }
         return 1
     }
+/*
     fun close() {
         conn.close()
     }
-
+*/
 }

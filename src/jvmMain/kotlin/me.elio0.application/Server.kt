@@ -221,7 +221,7 @@ fun Routing.categorie(db: DBConnection) {
     }
 
     get("/categorie/{idCategoria}") {
-        call.respondText(db.estraiCategoria(call.parameters["idCategoria"]))
+        call.respondText(db.estraiCategorie(call.parameters["idCategoria"] ?: ""))
     }
 
     post("/categorie") {
