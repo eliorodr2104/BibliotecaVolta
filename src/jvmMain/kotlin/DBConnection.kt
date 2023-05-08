@@ -176,7 +176,6 @@ class DBConnection {
                     idCopia = rs.getInt("IDCopia"),
                     isbn = rs.getString("ISBN"),
                     condizioni = rs.getString("Condizioni"),
-                    inPrestito = rs.getBoolean("Prestato"),
                     sezione = rs.getString("Sezione"),
                     scaffale = rs.getInt("Scaffale"),
                     ripiano = rs.getInt("Ripiano"),
@@ -214,7 +213,6 @@ class DBConnection {
                     idCopia = rs.getInt("IDCopia"),
                     isbn = rs.getString("ISBN"),
                     condizioni = rs.getString("Condizioni"),
-                    inPrestito = rs.getBoolean("Prestato"),
                     sezione = rs.getString("Sezione"),
                     scaffale = rs.getInt("Scaffale"),
                     ripiano = rs.getInt("Ripiano"),
@@ -235,10 +233,9 @@ class DBConnection {
                     "`Sezione`, " +
                     "`Scaffale`, " +
                     "`Ripiano`, " +
-                    "`Prestato`, " +
                     "`IDPrestito`, " +
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    "VALUES (?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
             preparedStatement?.setString(1, copia.isbn)
@@ -246,8 +243,7 @@ class DBConnection {
             preparedStatement?.setString(3, copia.sezione)
             preparedStatement?.setInt(4, copia.scaffale ?: 0)
             preparedStatement?.setInt(5, copia.ripiano ?: 0)
-            preparedStatement?.setBoolean(6, copia.inPrestito)
-            preparedStatement?.setInt(7, verificaPK(copia.idPrestito, "prestiti", "IDPrestito"))
+            preparedStatement?.setInt(6, verificaPK(copia.idPrestito, "prestiti", "IDPrestito"))
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -273,7 +269,6 @@ class DBConnection {
                     "Sezione = ?, " +
                     "Scaffale = ?, " +
                     "Ripiano = ?, " +
-                    "Prestato = ?, " +
                     "IDPrestito = ? " +
                     "WHERE IDCopia = ?"
 
@@ -283,9 +278,8 @@ class DBConnection {
             preparedStatement?.setString(3, copia.sezione)
             preparedStatement?.setInt(4, copia.scaffale ?: 0)
             preparedStatement?.setInt(5, copia.ripiano ?: 0)
-            preparedStatement?.setBoolean(6, copia.inPrestito)
-            preparedStatement?.setInt(7, verificaPK(copia.idPrestito, "prestiti", "IDPrestito"))
-            preparedStatement?.setInt(8, copia.idCopia)
+            preparedStatement?.setInt(6, verificaPK(copia.idPrestito, "prestiti", "IDPrestito"))
+            preparedStatement?.setInt(7, copia.idCopia)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
@@ -427,10 +421,11 @@ class DBConnection {
                     idPrestito = rs.getInt("IDPrestito"),
                     idCopia = rs.getInt("IDCopia"),
                     idUtente = rs.getInt("IDUtente"),
-                    dataInizio = rs.getString("Inizio"),
                     dataFine = rs.getString("Fine"),
+                    dataInizio = rs.getString("Inizio"),
                     condizioneIniziale = rs.getString("CondizioneIniziale"),
                     condizioneFinale = rs.getString("CondizioneFinale"),
+                    attivo = true
                 )
             )
         }
@@ -440,7 +435,7 @@ class DBConnection {
     fun estraiTuttiPrestiti(): ArrayList<Prestito> {
         val arr = ArrayList<Prestito>()
         // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
-        val rs = estrai("SELECT * FROM prestiti")
+        val rs = estrai("SELECT * FROM prestiti WHERE Attivo=1")
         //aggiunge tutti gli elementi trovati a un arraylist
         while (rs.next()) {
             arr.add(
@@ -448,10 +443,11 @@ class DBConnection {
                     idPrestito = rs.getInt("IDPrestito"),
                     idCopia = rs.getInt("IDCopia"),
                     idUtente = rs.getInt("IDUtente"),
-                    dataInizio = rs.getString("Inizio"),
                     dataFine = rs.getString("Fine"),
+                    dataInizio = rs.getString("Inizio"),
                     condizioneIniziale = rs.getString("CondizioneIniziale"),
                     condizioneFinale = rs.getString("CondizioneFinale"),
+                    attivo = rs.getBoolean("Attivo")
                 )
             )
         }
@@ -468,10 +464,11 @@ class DBConnection {
                     idPrestito = rs.getInt("IDPrestito"),
                     idCopia = rs.getInt("IDCopia"),
                     idUtente = rs.getInt("IDUtente"),
-                    dataInizio = rs.getString("Inizio"),
                     dataFine = rs.getString("Fine"),
+                    dataInizio = rs.getString("Inizio"),
                     condizioneIniziale = rs.getString("CondizioneIniziale"),
                     condizioneFinale = rs.getString("CondizioneFinale"),
+                    attivo = rs.getBoolean("Attivo")
                 )
             )
         } catch (e: Exception) {
@@ -737,7 +734,8 @@ class DBConnection {
     fun togglePrestitoCopia(prestito: Prestito, bool: Boolean) {
         val copia =
             GestioneJSON().getCopiaFromString(estraiCopia(verificaPK(prestito.idCopia, "copie", "IDCopia").toString()))
-        copia.inPrestito = bool
+        prestito.attivo = false
+        aggiornaPrestito(prestito)
         if (bool)
             copia.idPrestito = getMax()
         else

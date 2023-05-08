@@ -117,7 +117,7 @@ fun Routing.libri(db: DBConnection) {
     post("/libri") {
         try {
             val libro = call.receive<String>()
-            println(db.aggiungiLibro(Json.decodeFromString(libro)))
+            call.respond(db.aggiungiLibro(Json.decodeFromString(libro)))
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -127,7 +127,7 @@ fun Routing.libri(db: DBConnection) {
     put("/libri") {
         try {
             val libro = call.receive<String>()
-            println(db.aggiornaLibro(Json.decodeFromString(libro)))
+            call.respond(db.aggiornaLibro(Json.decodeFromString(libro)))
             call.respond(HttpStatusCode.OK, "Libro aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "Libro non trovato")
@@ -137,7 +137,7 @@ fun Routing.libri(db: DBConnection) {
     delete ("/libri/{isbn}"){
         try {
             val libro = call.receive<String>()
-            println(db.aggiungiLibro(Json.decodeFromString(libro)))
+            call.respond(db.aggiungiLibro(Json.decodeFromString(libro)))
             call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -158,7 +158,7 @@ fun Routing.copie(db: DBConnection) {
     post("/libri/{isbn}/copie") {
         try {
             val copia = call.receive<String>()
-            println(db.aggiungiCopia(Json.decodeFromString(copia)))
+            call.respond(db.aggiungiCopia(Json.decodeFromString(copia)))
             call.respond(HttpStatusCode.Created, "Nuova copia creata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -168,7 +168,7 @@ fun Routing.copie(db: DBConnection) {
     put("/copie") {
         try {
             val copia = call.receive<String>()
-            println(db.aggiornaCopia(Json.decodeFromString(copia)))
+            call.respond(db.aggiornaCopia(Json.decodeFromString(copia)))
             call.respond(HttpStatusCode.OK, "Copia aggiornata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "Copia non trovato")
@@ -189,7 +189,7 @@ fun Routing.utenti(db: DBConnection) {
     post("/utenti") {
         try {
             val utente = call.receive<String>()
-            println(db.aggiungiUtente(Json.decodeFromString(utente)))
+            call.respond(db.aggiungiUtente(Json.decodeFromString(utente)))
             call.respond(HttpStatusCode.Created, "Nuovo utente creato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -199,7 +199,7 @@ fun Routing.utenti(db: DBConnection) {
     put("/utenti") {
         try {
             val utente = call.receive<String>()
-            println(db.aggiornaUtente(Json.decodeFromString(utente)))
+            call.respond(db.aggiornaUtente(Json.decodeFromString(utente)))
             call.respond(HttpStatusCode.OK, "utente aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "utente non trovato")
@@ -220,7 +220,7 @@ fun Routing.prestiti(db: DBConnection) {
     post("/prestiti") {
         try {
             val prestito = call.receive<String>()
-            println(db.aggiungiPrestito(Json.decodeFromString(prestito)))
+            call.respond(db.aggiungiPrestito(Json.decodeFromString(prestito)))
             call.respond(HttpStatusCode.Created, "Nuovo prestito creato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -230,7 +230,7 @@ fun Routing.prestiti(db: DBConnection) {
     put("/prestiti") {
         try {
             val prestito = call.receive<String>()
-            println(db.aggiornaPrestito(Json.decodeFromString(prestito)))
+            call.respond(db.aggiornaPrestito(Json.decodeFromString(prestito)))
             call.respond(HttpStatusCode.OK, "prestito aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "prestito non trovato")
@@ -251,7 +251,7 @@ fun Routing.categorie(db: DBConnection) {
     post("/categorie") {
         try {
             val categoria = call.receive<String>()
-            println(db.aggiungiCategoria(Json.decodeFromString(categoria)))
+            call.respond(db.aggiungiCategoria(Json.decodeFromString(categoria)))
             call.respond(HttpStatusCode.Created, "Nuova categoria creata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -261,7 +261,7 @@ fun Routing.categorie(db: DBConnection) {
     put("/categorie") {
         try {
             val categoria = call.receive<String>()
-            println(db.aggiornaCategoria(Json.decodeFromString(categoria)))
+            call.respond(db.aggiornaCategoria(Json.decodeFromString(categoria)))
             call.respond(HttpStatusCode.OK, "categoria aggiornata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "categoria non trovata")
@@ -282,7 +282,7 @@ fun Routing.generi(db: DBConnection) {
     post("/generi/{idGenere}") {
         try {
             val genere = call.receive<String>()
-            println(db.aggiungiGenere(Json.decodeFromString(genere)))
+            call.respond(db.aggiungiGenere(Json.decodeFromString(genere)))
             call.respond(HttpStatusCode.Created, "Nuovo genere creata con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.Conflict, "ERRORE")
@@ -292,7 +292,7 @@ fun Routing.generi(db: DBConnection) {
     put("/generi") {
         try {
             val genere = call.receive<String>()
-            println(db.aggiornaGenere(Json.decodeFromString(genere)))
+            call.respond(db.aggiornaGenere(Json.decodeFromString(genere)))
             call.respond(HttpStatusCode.OK, "genere aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "genere non trovato")
