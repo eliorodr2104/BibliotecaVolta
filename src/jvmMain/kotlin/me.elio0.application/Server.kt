@@ -3,6 +3,8 @@ package me.elio0.application
 import DBConnection
 import EstraiInfoLibro
 import GestioneJSON
+import GestionePrestito
+import Prestito
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -16,6 +18,8 @@ import kotlinx.html.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 fun HTML.index() {
@@ -45,6 +49,26 @@ fun main() {
     }
 
     embeddedServer(Netty, environment).start(wait = true)
+
+    val timer = Timer()
+
+    //val durata = 5000L
+    val durata = 21600000L
+
+    val prestiti : ArrayList<Prestito> = DBConnection().estraiTuttiPrestiti()
+
+    val cont = object : TimerTask() {
+        override fun run() {
+            val gp = GestionePrestito()
+            for (a in prestiti){
+                if (a.attivo){
+                    gp.verificaPrestito(a.idPrestito)
+                }
+            }
+        }
+    }
+
+    timer.scheduleAtFixedRate(cont, 0L, durata)
 }
 
 fun Application.module() {

@@ -8,7 +8,7 @@ class DBConnection {
     private var conn: Connection
     private var username = "root" // provide the username
     private var password = "" // provide the corresponding password
-    private val url = "jdbc:mysql://localhost/biblioteca?useSSL=false&serverTimezone=UTC"
+    private val url = "jdbc:mysql://192.168.56.1/biblioteca?useSSL=false&serverTimezone=UTC"
 
     init {
         conn = DriverManager.getConnection(url, username, password)
@@ -436,6 +436,28 @@ class DBConnection {
         }
         return Json.encodeToString(arr)
     }
+
+    fun estraiTuttiPrestiti(): ArrayList<Prestito> {
+        val arr = ArrayList<Prestito>()
+        // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+        val rs = estrai("SELECT * FROM prestiti")
+        //aggiunge tutti gli elementi trovati a un arraylist
+        while (rs.next()) {
+            arr.add(
+                Prestito(
+                    idPrestito = rs.getInt("IDPrestito"),
+                    idCopia = rs.getInt("IDCopia"),
+                    idUtente = rs.getInt("IDUtente"),
+                    dataInizio = rs.getString("Inizio"),
+                    dataFine = rs.getString("Fine"),
+                    condizioneIniziale = rs.getString("CondizioneIniziale"),
+                    condizioneFinale = rs.getString("CondizioneFinale"),
+                )
+            )
+        }
+        return arr
+    }
+
 
     fun estraiPrestito(idPrestito: String?): String {
         return try {
