@@ -26,28 +26,6 @@ class GestionePrestito {
         val prestito = Json.decodeFromString(dbconn.estraiPrestito(id.toString())) as Prestito
         val utente = Json.decodeFromString(dbconn.estraiUtente(prestito.idUtente.toString())) as Utente
 
-
-        /*UTENTE E PRESTITO DI PROVA
-        val prestito = Prestito(
-            idPrestito = 1,
-            idCopia = 2,
-            idUtente = 3,
-            dataFine = "01/05/2023",
-            dataInizio = "15/04/2023",
-            condizioneIniziale = "Buone condizioni",
-            condizioneFinale = "Ottime condizioni"
-        )
-
-        val utente = Utente(
-            idUtente = 1,
-            nome = "Mario",
-            cognome = "Rossi",
-            numero = "1234567890",
-            mailAlternativa = "ermitubeyt@gmail.com",
-            grado = 1
-        )*/
-
-
         val b = isScaduto(prestito)
         return if (b < 0){
             //PRESTITO SCADUTO
@@ -101,26 +79,12 @@ class GestionePrestito {
     fun invioMailScaduto(prestito : Prestito, utente : Utente){
 
         val dbconn = DBConnection()
-        val libro = Json.decodeFromString(dbconn.estraiCopia(prestito.idCopia.toString())) as Libro
 
+        val ccopia = Json.decodeFromString(dbconn.estraiCopia(prestito.idCopia.toString())) as CopiaLibro
 
+        val libro = Json.decodeFromString(dbconn.estraiLibro(ccopia.isbn)) as DatiLibro
 
-        /* LIBRO DI PROVA
-        val libro = Libro(
-            isbn = "9788808183155",
-            titolo = "Il fu Mattia Pascal",
-            sottotitolo = "storia di un equivoco",
-            lingua = "Italiano",
-            casaEditrice = "Feltrinelli",
-            autore = "Luigi Pirandello",
-            annoPubblicazione = "2018",
-            idCategoria = 1,
-            idGenere = 3,
-            copie = null,
-            descrizione = "Il fu Mattia Pascal è un romanzo di Luigi Pirandello pubblicato nel 1904",
-            image = "")*/
-
-            // al momento configurato con mailAlternativa, con configurazione mail
+        // al momento configurato con mailAlternativa, con configurazione mail
         // google "volta-alessandria.it" sostituire mailAlternativa in mail
         val destinatario = utente.mailAlternativa
 

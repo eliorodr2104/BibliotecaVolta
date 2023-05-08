@@ -8,7 +8,7 @@ class DBConnection {
     private var conn: Connection
     private var username = "root" // provide the username
     private var password = "" // provide the corresponding password
-    private val url = "jdbc:mysql://192.168.56.1/biblioteca?useSSL=false&serverTimezone=UTC"
+    private val url = "jdbc:mysql://localhost/biblioteca?useSSL=false&serverTimezone=UTC"
 
     init {
         conn = DriverManager.getConnection(url, username, password)

@@ -38,8 +38,6 @@ fun HTML.index() {
 }
 
 fun main() {
-    //@TODO ermanno qui mette la gesione del prestito
-
     val environment = applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
         connector {
@@ -47,12 +45,9 @@ fun main() {
         }
         module(Application::module)
     }
-
-    embeddedServer(Netty, environment).start(wait = true)
-
     val timer = Timer()
 
-    //val durata = 5000L
+    //val durata = 10000L
     val durata = 21600000L
 
     val prestiti : ArrayList<Prestito> = DBConnection().estraiTuttiPrestiti()
@@ -62,13 +57,16 @@ fun main() {
             val gp = GestionePrestito()
             for (a in prestiti){
                 if (a.attivo){
-                    gp.verificaPrestito(a.idPrestito)
+                    println(gp.verificaPrestito(a.idPrestito))
                 }
             }
         }
     }
 
     timer.scheduleAtFixedRate(cont, 0L, durata)
+    embeddedServer(Netty, environment).start(wait = true)
+
+
 }
 
 fun Application.module() {
