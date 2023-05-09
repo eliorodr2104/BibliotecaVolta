@@ -47,26 +47,20 @@ fun main() {
     }
     val timer = Timer()
 
-    //val durata = 10000L
-    val durata = 21600000L
-
-    val prestiti : ArrayList<Prestito> = DBConnection().estraiTuttiPrestiti()
+    val prestiti = DBConnection().estraiTuttiPrestiti()
 
     val cont = object : TimerTask() {
         override fun run() {
             val gp = GestionePrestito()
             for (a in prestiti){
-                if (a.attivo){
+                if (a.attivo)
                     println(gp.verificaPrestito(a.idPrestito))
-                }
             }
         }
     }
 
-    timer.scheduleAtFixedRate(cont, 0L, durata)
+    timer.scheduleAtFixedRate(cont, 0L, 86400000L)
     embeddedServer(Netty, environment).start(wait = true)
-
-
 }
 
 fun Application.module() {
