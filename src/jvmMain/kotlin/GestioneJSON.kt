@@ -73,8 +73,12 @@ class GestioneJSON {
         return Json.encodeToString(any)
     }
 
-    fun getCopiaFromString(copia: String):CopiaLibro{
+    fun getCopiaFromString(copia: String): CopiaLibro{
         return Gson().fromJson(copia, CopiaLibro::class.java)
+    }
+
+    fun getMapFromString(mappa: String): Map<*, *>? {
+        return Gson().fromJson(mappa, Map::class.java)
     }
 }
     /*

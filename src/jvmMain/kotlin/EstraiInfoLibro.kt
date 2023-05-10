@@ -49,7 +49,7 @@ class EstraiInfoLibro {
             casaEditrice = volumeInfo["publisher"] as String?,
             autore = (volumeInfo["authors"] as JSONArray?)?.joinToString(" - ") { it as String } ?: "",
             annoPubblicazione = volumeInfo["publishedDate"] as String?,
-            idCategorie = arrayListOf(-1),
+            idCategorie = "-1",
             idGenere = -1,
             descrizione = volumeInfo["description"] as String?,
             np = volumeInfo["pageCount"].toString().toInt(),

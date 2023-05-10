@@ -5,6 +5,7 @@ import EstraiInfoLibro
 import GestioneJSON
 import GestionePrestito
 import Prestito
+import com.google.gson.Gson
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -77,7 +78,7 @@ fun Application.module() {
 fun Application.biblioteca() {
     val db = DBConnection()
     routing {
-        api()
+        api(db)
         libri(db)
         utenti(db)
         copie(db)
@@ -87,7 +88,7 @@ fun Application.biblioteca() {
     }
 }
 
-fun Routing.api(){
+fun Routing.api(db: DBConnection){
     get ("API/{isbn}"){
         try {
             call.respondText(GestioneJSON().getJsonString(EstraiInfoLibro().ricercaLibro(call.parameters["isbn"] ?: "")))
@@ -95,11 +96,23 @@ fun Routing.api(){
             call.respondText(e.message ?: "")
         }
     }
+
+    delete ("cancella/{tabella}/{nomePK}/{valorePK}") {
+        call.respondText(db.delete(
+            call.parameters["tabella"] ?: "",
+            call.parameters["nomePK"] ?: "",
+            call.parameters["valorePK"] ?: ""
+        ))
+    }
 }
 
 fun Routing.libri(db: DBConnection) {
-    get("/libri") {
-        call.respondText(db.estraiLibri())
+    get("/catalogo/{page}") {
+        call.respondText(db.estraiLibri(call.parameters["page"]!!.toInt()))
+    }
+
+    get("/filtra/{map}") {
+        call.respondText(db.estraiLibri(GestioneJSON().getMapFromString(call.parameters["map"] ?: "")))
     }
 
     get("/libri/{isbn}") {
@@ -123,16 +136,6 @@ fun Routing.libri(db: DBConnection) {
             call.respond(HttpStatusCode.OK, "Libro aggiornato con successo")
         } catch (e: Exception) {
             call.respond(HttpStatusCode.NotFound, "Libro non trovato")
-        }
-    }
-
-    delete ("/libri/{isbn}"){
-        try {
-            val libro = call.receive<String>()
-            call.respond(db.aggiungiLibro(Json.decodeFromString(libro)))
-            call.respond(HttpStatusCode.Created, "Nuovo libro creato con successo")
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.Conflict, "ERRORE")
         }
     }
 }

@@ -2,7 +2,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.lang.IllegalArgumentException
 import java.sql.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 class DBConnection {
@@ -19,9 +18,9 @@ class DBConnection {
     //LIBRI
     fun estraiLibri(page: Int): String {
         try {
-            val arr = ArrayList<DatiLibro>()
+            val arr = ArrayList<DatiLibro>(10)
             // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
-            val rs = estrai("SELECT * FROM libri LIMIT 15 OFFSET ${page * 15}")
+            val rs = estrai("SELECT * FROM libri ORDER BY Titolo LIMIT 10 OFFSET ${page * 10}")
             //aggiunge tutti gli elementi trovati a un arraylist
             while (rs.next()) {
                 arr.add(
@@ -33,7 +32,7 @@ class DBConnection {
                         casaEditrice = rs.getString("CasaEditrice"),
                         autore = rs.getString("Autore"),
                         annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                        idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
+                        idCategorie = rs.getString("IDCategorie"),
                         idGenere = rs.getInt("IDGenere"),
                         descrizione = rs.getString("Descrizione"),
                         np = rs.getInt("NumeroPagine"),
@@ -47,12 +46,12 @@ class DBConnection {
         }
     }
 
-    fun estraiLibri(filtro: Map<String, String>): String {
+    fun estraiLibri(filtro: Map<*, *>?): String {
         try {
             val arr = ArrayList<DatiLibro>()
             var query = "SELECT * FROM libri WHERE "
 
-            for (entry in filtro.entries.iterator()) {
+            for (entry in filtro!!.entries.iterator()) {
                 query += "${entry.key} LIKE '%${entry.value}%' COLLATE latin1_general_ci AND "
             }
             query = query.dropLast(5)
@@ -70,7 +69,7 @@ class DBConnection {
                         casaEditrice = rs.getString("CasaEditrice"),
                         autore = rs.getString("Autore"),
                         annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                        idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
+                        idCategorie = rs.getString("IDCategorie"),
                         idGenere = rs.getInt("IDGenere"),
                         descrizione = rs.getString("Descrizione"),
                         np = rs.getInt("NumeroPagine"),
@@ -97,7 +96,7 @@ class DBConnection {
                     casaEditrice = rs.getString("CasaEditrice"),
                     autore = rs.getString("Autore"),
                     annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                    idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
+                    idCategorie = rs.getString("IDCategorie"),
                     idGenere = rs.getInt("IDGenere"),
                     descrizione = rs.getString("Descrizione"),
                     np = rs.getInt("NumeroPagine"),
@@ -120,7 +119,7 @@ class DBConnection {
                     "`CasaEditrice`, " + //String
                     "`Autore`, " + //Int
                     "`AnnoPubblicazione`, " + //String
-                    "`IDCategoria`, " + //Int
+                    "`IDCategorie`, " + //Int
                     "`IDGenere`, " + //Int
                     "`Descrizione`, " + //String
                     "`NumeroPagine`, " + //String
@@ -235,7 +234,7 @@ class DBConnection {
                 casaEditrice = rs.getString("CasaEditrice"),
                 autore = rs.getString("Autore"),
                 annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
+                idCategorie = rs.getString("IDCategorie"),
                 idGenere = rs.getInt("IDGenere"),
                 copie = arr,
                 descrizione = rs.getString("Descrizione"),
@@ -772,6 +771,21 @@ class DBConnection {
         return conn.createStatement().executeQuery(query)
     }
 
+    fun delete(table: String, namePK: String, pk:String): String{
+        return try {
+            val query = "DELETE FROM $table WHERE $namePK = ?"
+            val ps = conn.prepareStatement(query)
+            ps.setString(1, pk)
+            val numRowsDeleted = ps.executeUpdate()
+            if (numRowsDeleted > 0)
+                "Cancellato elemento con $namePK uguale a $pk della tabella $table"
+            else
+                "Impossibile cancellare l'elemento selezionato"
+        }catch (e: Exception){
+            e.message ?: ""
+        }
+    }
+
     fun togglePrestitoCopia(prestito: Prestito, bool: Boolean) {
         val copia =
             GestioneJSON().getCopiaFromString(estraiCopia(verificaPK(prestito.idCopia, "copie", "IDCopia").toString()))
@@ -793,22 +807,16 @@ class DBConnection {
         return id
     }
 
-    private fun verificaPKfromList(id: ArrayList<Int>): String {
+    private fun verificaPKfromList(list: String): String {
+        val id = list.split(",")
         for (i in id.indices) {
             val preparedStatement = conn.prepareStatement("SELECT IDCategoria FROM categorie WHERE IDCategoria = ?")
-            preparedStatement.setString(1, id[i].toString())
+            preparedStatement.setString(1, id[i])
 
-            if (!preparedStatement.executeQuery().next() && id[i] != -1)
+            if (!preparedStatement.executeQuery().next() && id[i].toInt() != -1)
                 throw IllegalArgumentException("\"IDCategorie\" con valore \"${id[i]}\" assente nella tabella \"Categorie\"")
         }
         return id.toString()
-    }
-
-    private fun listToArrayList(list: List<String>): ArrayList<Int> {
-        val arr = ArrayList<Int>()
-        for (i in list.indices)
-            arr.add(list[i].toInt())
-        return arr
     }
 
 

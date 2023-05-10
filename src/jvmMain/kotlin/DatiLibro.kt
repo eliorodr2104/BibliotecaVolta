@@ -26,7 +26,7 @@ data class DatiLibro(
     val casaEditrice: String?,
     val autore: String,
     val annoPubblicazione: String?,
-    val idCategorie: ArrayList<Int>,
+    val idCategorie: String,
     val idGenere: Int,
     val descrizione: String?,
     val np: Int,

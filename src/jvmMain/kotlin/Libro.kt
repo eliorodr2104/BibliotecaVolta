@@ -28,7 +28,7 @@ data class Libro(
     val casaEditrice: String?,
     val autore: String,
     val annoPubblicazione: String?,
-    val idCategorie: ArrayList<Int>,
+    val idCategorie: String,
     val idGenere: Int,
     val copie: ArrayList<CopiaLibro>?,
     val descrizione: String?,
