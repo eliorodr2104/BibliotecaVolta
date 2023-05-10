@@ -2,6 +2,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.lang.IllegalArgumentException
 import java.sql.*
+import java.util.*
 import kotlin.collections.ArrayList
 
 class DBConnection {
@@ -16,30 +17,71 @@ class DBConnection {
 
 
     //LIBRI
-    fun estraiLibri(): String {
-        val arr = ArrayList<DatiLibro>()
-        // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
-        val rs = estrai("SELECT * FROM libri")
-        //aggiunge tutti gli elementi trovati a un arraylist
-        while (rs.next()) {
-            arr.add(
-                DatiLibro(
-                    isbn = rs.getString("ISBN"),
-                    titolo = rs.getString("Titolo"),
-                    sottotitolo = rs.getString("Sottotitolo"),
-                    lingua = rs.getString("Lingua"),
-                    casaEditrice = rs.getString("CasaEditrice"),
-                    autore = rs.getString("Autore"),
-                    annoPubblicazione = rs.getString("AnnoPubblicazione"),
-                    idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
-                    idGenere = rs.getInt("IDGenere"),
-                    descrizione = rs.getString("Descrizione"),
-                    np = rs.getInt("NumeroPagine"),
-                    image = rs.getString("Immagine")
+    fun estraiLibri(page: Int): String {
+        try {
+            val arr = ArrayList<DatiLibro>()
+            // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+            val rs = estrai("SELECT * FROM libri LIMIT 15 OFFSET ${page * 15}")
+            //aggiunge tutti gli elementi trovati a un arraylist
+            while (rs.next()) {
+                arr.add(
+                    DatiLibro(
+                        isbn = rs.getString("ISBN"),
+                        titolo = rs.getString("Titolo"),
+                        sottotitolo = rs.getString("Sottotitolo"),
+                        lingua = rs.getString("Lingua"),
+                        casaEditrice = rs.getString("CasaEditrice"),
+                        autore = rs.getString("Autore"),
+                        annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                        idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
+                        idGenere = rs.getInt("IDGenere"),
+                        descrizione = rs.getString("Descrizione"),
+                        np = rs.getInt("NumeroPagine"),
+                        image = rs.getString("Immagine")
+                    )
                 )
-            )
+            }
+            return Json.encodeToString(arr)
+        } catch (e: Exception) {
+            return e.message ?: ""
         }
-        return Json.encodeToString(arr)
+    }
+
+    fun estraiLibri(filtro: Map<String, String>): String {
+        try {
+            val arr = ArrayList<DatiLibro>()
+            var query = "SELECT * FROM libri WHERE "
+
+            for (entry in filtro.entries.iterator()) {
+                query += "${entry.key} LIKE '%${entry.value}%' COLLATE latin1_general_ci AND "
+            }
+            query = query.dropLast(5)
+
+            // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
+            val rs = estrai(query)
+            //aggiunge tutti gli elementi trovati a un arraylist
+            while (rs.next()) {
+                arr.add(
+                    DatiLibro(
+                        isbn = rs.getString("ISBN"),
+                        titolo = rs.getString("Titolo"),
+                        sottotitolo = rs.getString("Sottotitolo"),
+                        lingua = rs.getString("Lingua"),
+                        casaEditrice = rs.getString("CasaEditrice"),
+                        autore = rs.getString("Autore"),
+                        annoPubblicazione = rs.getString("AnnoPubblicazione"),
+                        idCategorie = listToArrayList(rs.getString("IDCategorie").split(",")),
+                        idGenere = rs.getInt("IDGenere"),
+                        descrizione = rs.getString("Descrizione"),
+                        np = rs.getInt("NumeroPagine"),
+                        image = rs.getString("Immagine")
+                    )
+                )
+            }
+            return Json.encodeToString(arr)
+        } catch (e: Exception) {
+            return e.message ?: ""
+        }
     }
 
     fun estraiLibro(isbn: String): String {
@@ -67,7 +109,6 @@ class DBConnection {
         }
     }
 
-    //@TODO Controllo validità categorie e generi
     fun aggiungiLibro(libro: DatiLibro): String {
         try {
             val preparedStatement: PreparedStatement?
