@@ -827,9 +827,4 @@ class DBConnection {
         }
         return 1
     }
-    /*
-        fun close() {
-            conn.close()
-        }
-    */
 }

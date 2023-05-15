@@ -78,7 +78,7 @@ fun Application.module() {
 fun Application.biblioteca() {
     val db = DBConnection()
     routing {
-        api(db)
+        tools(db)
         libri(db)
         utenti(db)
         copie(db)
@@ -88,7 +88,7 @@ fun Application.biblioteca() {
     }
 }
 
-fun Routing.api(db: DBConnection){
+fun Routing.tools(db: DBConnection){
     get ("API/{isbn}"){
         try {
             call.respondText(GestioneJSON().getJsonString(EstraiInfoLibro().ricercaLibro(call.parameters["isbn"] ?: "")))
@@ -104,9 +104,7 @@ fun Routing.api(db: DBConnection){
             call.parameters["valorePK"] ?: ""
         ))
     }
-}
 
-fun Routing.libri(db: DBConnection) {
     get("/catalogo/{page}") {
         call.respondText(db.estraiLibri(call.parameters["page"]!!.toInt()))
     }
@@ -114,7 +112,9 @@ fun Routing.libri(db: DBConnection) {
     get("/filtra/{map}") {
         call.respondText(db.estraiLibri(GestioneJSON().getMapFromString(call.parameters["map"] ?: "")))
     }
+}
 
+fun Routing.libri(db: DBConnection) {
     get("/libri/{isbn}") {
         call.respond(db.estraiLibro(call.parameters["isbn"] ?: ""))
     }
