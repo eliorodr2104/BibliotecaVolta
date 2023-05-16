@@ -10,6 +10,8 @@ class DBConnection {
     private var password = "" // provide the corresponding password
     private val url = "jdbc:mysql://localhost/biblioteca?useSSL=false&serverTimezone=UTC"
 
+    //ALTER TABLE tablename AUTO_INCREMENT = 1
+
     init {
         conn = DriverManager.getConnection(url, username, password)
     }
@@ -208,7 +210,7 @@ class DBConnection {
     fun estraiCopie(isbn: String): String {
         val arr = ArrayList<CopiaLibro>()
         // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
-        var rs = estrai("SELECT * FROM copie WHERE isbn=$isbn")
+        var rs = estrai("SELECT * FROM copie WHERE isbn=$isbn AND Attiva=1")
         //aggiunge tutti gli elementi trovati a un arraylist
         while (rs.next()) {
             arr.add(
@@ -273,7 +275,7 @@ class DBConnection {
                     "`Sezione`, " +
                     "`Scaffale`, " +
                     "`Ripiano`, " +
-                    "`IDPrestito`, " +
+                    "`IDPrestito` " +
                     ") " +
                     "VALUES (?, ?, ?, ?, ?, ?)"
 
@@ -334,6 +336,26 @@ class DBConnection {
             return e.message ?: ""
         }
         return ""
+    }
+
+    fun deleteCopia(pk: String): String {
+        return try {
+            val preparedStatement: PreparedStatement?
+            val query = "UPDATE copie SET Attiva = 0 WHERE IDCopia = ?"
+
+            preparedStatement = conn.prepareStatement(query)
+            preparedStatement?.setString(1, pk)
+
+            val rowsAffected = preparedStatement?.executeUpdate()
+
+            if (rowsAffected!! > 0)
+                "Copia eliminata"
+            else
+                "Nessuna copia trovata"
+
+        } catch (e: Exception) {
+            e.message ?: "errore"
+        }
     }
 
     //UTENTI
@@ -769,21 +791,6 @@ class DBConnection {
     //UTILS
     private fun estrai(query: String): ResultSet {
         return conn.createStatement().executeQuery(query)
-    }
-
-    fun delete(table: String, namePK: String, pk:String): String{
-        return try {
-            val query = "DELETE FROM $table WHERE $namePK = ?"
-            val ps = conn.prepareStatement(query)
-            ps.setString(1, pk)
-            val numRowsDeleted = ps.executeUpdate()
-            if (numRowsDeleted > 0)
-                "Cancellato elemento con $namePK uguale a $pk della tabella $table"
-            else
-                "Impossibile cancellare l'elemento selezionato"
-        }catch (e: Exception){
-            e.message ?: ""
-        }
     }
 
     fun togglePrestitoCopia(prestito: Prestito, bool: Boolean) {

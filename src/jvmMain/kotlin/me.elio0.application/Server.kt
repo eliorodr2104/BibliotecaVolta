@@ -97,10 +97,8 @@ fun Routing.tools(db: DBConnection){
         }
     }
 
-    delete ("cancella/{tabella}/{nomePK}/{valorePK}") {
-        call.respondText(db.delete(
-            call.parameters["tabella"] ?: "",
-            call.parameters["nomePK"] ?: "",
+    delete ("cancellaCopia/{valorePK}") {
+        call.respondText(db.deleteCopia(
             call.parameters["valorePK"] ?: ""
         ))
     }
@@ -150,7 +148,7 @@ fun Routing.copie(db: DBConnection) {
         call.respond(db.estraiCopia(call.parameters["idCopia"]))
     }
 
-    post("/libri/{isbn}/copie") {
+    post("/copie") {
         try {
             val copia = call.receive<String>()
             call.respond(db.aggiungiCopia(Json.decodeFromString(copia)))
