@@ -169,7 +169,7 @@ class DBConnection {
                     "CasaEditrice = ?, " +
                     "Autore = ?, " +
                     "AnnoPubblicazione = ?, " +
-                    "IDCategoria = ?, " +
+                    "IDCategorie = ?, " +
                     "IDGenere = ?, " +
                     "Descrizione = ?, " +
                     "NumeroPagine = ?, " +

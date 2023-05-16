@@ -23,6 +23,8 @@ class EstraiInfoLibro {
      * @return libro il libro trovato
      */
     fun ricercaLibro(isbn: String): DatiLibro {
+        var titolo : String
+        var sottotitolo : String
         if (isbn == "") {
             throw InvalidIsbnException("Isbn non valido")
         }
@@ -41,10 +43,19 @@ class EstraiInfoLibro {
         val volumeInfo = bookInfo["volumeInfo"] as JSONObject
 
         val imageLink = volumeInfo["imageLinks"] as JSONObject
+
+        if(volumeInfo["title"].toString().contains('.')){
+            titolo = volumeInfo["title"].toString().split('.')[0]
+            sottotitolo = volumeInfo["title"].toString().split('.')[1]
+        }else{
+            titolo =  volumeInfo["title"] as String
+            sottotitolo = volumeInfo["subtitle"] as String
+        }
+
         return DatiLibro(
             isbn = isbn,
-            titolo = volumeInfo["title"] as String,
-            sottotitolo = volumeInfo["subtitle"] as String?,
+            titolo = titolo,
+            sottotitolo = sottotitolo,
             lingua = volumeInfo["language"] as String,
             casaEditrice = volumeInfo["publisher"] as String?,
             autore = (volumeInfo["authors"] as JSONArray?)?.joinToString(" - ") { it as String } ?: "",
