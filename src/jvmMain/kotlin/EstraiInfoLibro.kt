@@ -75,7 +75,7 @@ class EstraiInfoLibro {
         return if (arr[0] == "https")
             url
         else
-            "${arr[0]}://${arr[1]}"
+            "${arr[0]}s://${arr[1]}"
     }
 }
 
