@@ -23,8 +23,8 @@ class EstraiInfoLibro {
      * @return libro il libro trovato
      */
     fun ricercaLibro(isbn: String): DatiLibro {
-        var titolo : String
-        var sottotitolo : String
+        val titolo : String
+        val sottotitolo : String?
         if (isbn == "") {
             throw InvalidIsbnException("Isbn non valido")
         }
@@ -46,10 +46,10 @@ class EstraiInfoLibro {
 
         if(volumeInfo["title"].toString().contains('.')){
             titolo = volumeInfo["title"].toString().split('.')[0]
-            sottotitolo = volumeInfo["title"].toString().split('.')[1]
+            sottotitolo = volumeInfo["title"].toString().split('.')[1].trim()
         }else{
             titolo =  volumeInfo["title"] as String
-            sottotitolo = volumeInfo["subtitle"] as String
+            sottotitolo = volumeInfo["subtitle"] as String?
         }
 
         return DatiLibro(

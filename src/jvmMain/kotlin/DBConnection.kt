@@ -368,11 +368,12 @@ class DBConnection {
             arr.add(
                 Utente(
                     idUtente = rs.getInt("IDUtente"),
+                    nome = rs.getString("nome"),
                     cognome = rs.getString("cognome"),
                     numero = rs.getString("numero"),
                     mailAlternativa = rs.getString("mailAlternativa"),
                     grado = rs.getInt("GradoAccesso"),
-                    nome = rs.getString("nome")
+                    preferiti = rs.getString("Preferiti")
                 )
             )
         }
@@ -386,11 +387,12 @@ class DBConnection {
             Json.encodeToString(
                 Utente(
                     idUtente = rs.getInt("IDUtente"),
+                    nome = rs.getString("nome"),
                     cognome = rs.getString("cognome"),
                     numero = rs.getString("numero"),
                     mailAlternativa = rs.getString("mailAlternativa"),
                     grado = rs.getInt("GradoAccesso"),
-                    nome = rs.getString("nome")
+                    preferiti = rs.getString("Preferiti")
                 )
             )
         } catch (e: Exception) {
@@ -407,7 +409,8 @@ class DBConnection {
                     "`Cognome`, " +
                     "`Numero`, " +
                     "`MailAlternativa`, " +
-                    "`GradoAccesso` " +
+                    "`GradoAccesso`, " +
+                    "`Preferiti`" +
                     ") " +
                     "VALUES (?, ?, ?, ?, ?, ?)"
 
@@ -443,7 +446,8 @@ class DBConnection {
                     "Cognome = ?, " +
                     "Numero = ?, " +
                     "MailAlternativa = ?, " +
-                    "GradoAccesso = ? " +
+                    "GradoAccesso = ?, " +
+                    "Preferiti = ?" +
                     "WHERE IDUtente = ?"
 
             preparedStatement = conn.prepareStatement(query)
@@ -453,7 +457,8 @@ class DBConnection {
             preparedStatement?.setString(4, utente.numero)
             preparedStatement?.setString(5, utente.mailAlternativa)
             preparedStatement?.setInt(6, utente.grado)
-            preparedStatement?.setInt(7, utente.idUtente)
+            preparedStatement?.setString(7, utente.preferiti)
+            preparedStatement?.setInt(8, utente.idUtente)
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
