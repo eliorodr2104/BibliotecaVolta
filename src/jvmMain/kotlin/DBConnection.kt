@@ -373,16 +373,17 @@ class DBConnection {
                     numero = rs.getString("numero"),
                     mailAlternativa = rs.getString("mailAlternativa"),
                     grado = rs.getInt("GradoAccesso"),
-                    preferiti = rs.getString("Preferiti")
+                    preferiti = rs.getString("Preferiti"),
+                    mail = rs.getString("Mail")
                 )
             )
         }
         return Json.encodeToString(arr)
     }
 
-    fun estraiUtente(idUtente: String?): String {
+    fun estraiUtente(mail: String): String {
         return try {
-            val rs = estrai("SELECT * FROM utenti WHERE IDUtente=$idUtente")
+            val rs = estrai("SELECT * FROM utenti WHERE Mail='$mail'")
             rs.next()
             Json.encodeToString(
                 Utente(
@@ -392,7 +393,8 @@ class DBConnection {
                     numero = rs.getString("numero"),
                     mailAlternativa = rs.getString("mailAlternativa"),
                     grado = rs.getInt("GradoAccesso"),
-                    preferiti = rs.getString("Preferiti")
+                    preferiti = rs.getString("Preferiti"),
+                    mail = rs.getString("Mail")
                 )
             )
         } catch (e: Exception) {

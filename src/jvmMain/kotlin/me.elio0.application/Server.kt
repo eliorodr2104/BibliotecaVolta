@@ -175,8 +175,8 @@ fun Routing.utenti(db: DBConnection) {
         call.respond(db.estraiUtenti())
     }
 
-    get("/utenti/{idUtente}") {
-        call.respond(db.estraiUtente(call.parameters["idUtente"]))
+    get("/utenti/{mail}") {
+        call.respond(db.estraiUtente(call.parameters["mail"] ?: ""))
     }
 
     post("/utenti") {
