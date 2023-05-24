@@ -4,8 +4,6 @@ import DBConnection
 import EstraiInfoLibro
 import GestioneJSON
 import GestionePrestito
-import Prestito
-import com.google.gson.Gson
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -15,14 +13,12 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.html.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import java.util.*
-import kotlin.collections.ArrayList
 
-
+/*
 fun HTML.index() {
     head {
         title("Hello from Ktor!")
@@ -37,6 +33,7 @@ fun HTML.index() {
         script(src = "/static/BibliotecaVolta.js") {}
     }
 }
+*/
 
 fun main() {
     val environment = applicationEngineEnvironment {
