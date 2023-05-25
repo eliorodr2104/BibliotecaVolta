@@ -104,8 +104,8 @@ fun Routing.tools(db: DBConnection){
         call.respondText(db.estraiLibri(call.parameters["page"]!!.toInt()))
     }
 
-    get("/filtra/{map}") {
-        call.respondText(db.estraiLibri(GestioneJSON().getMapFromString(call.parameters["map"] ?: "")))
+    get("/filtra/{map}/{page}") {
+        call.respondText(db.estraiLibri(GestioneJSON().getMapFromString(call.parameters["map"] ?: ""), call.parameters["page"]!!.toInt()))
     }
 }
 

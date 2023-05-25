@@ -48,7 +48,7 @@ class DBConnection {
         }
     }
 
-    fun estraiLibri(filtro: Map<*, *>?): String {
+    fun estraiLibri(filtro: Map<*, *>?, page: Int): String {
         try {
             val arr = ArrayList<DatiLibro>()
             var query = "SELECT * FROM libri WHERE "
@@ -59,7 +59,7 @@ class DBConnection {
             query = query.dropLast(5)
 
             // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
-            val rs = estrai(query)
+            val rs = estrai(query + " ORDER BY Titolo LIMIT 10 OFFSET ${page * 10}")
             //aggiunge tutti gli elementi trovati a un arraylist
             while (rs.next()) {
                 arr.add(
@@ -414,7 +414,7 @@ class DBConnection {
                     "`GradoAccesso`, " +
                     "`Preferiti`" +
                     ") " +
-                    "VALUES (?, ?, ?, ?, ?, ?)"
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
 
             preparedStatement = conn.prepareStatement(query)
             preparedStatement?.setString(1, utente.mail)
@@ -423,6 +423,8 @@ class DBConnection {
             preparedStatement?.setString(4, utente.numero)
             preparedStatement?.setString(5, utente.mailAlternativa)
             preparedStatement?.setInt(6, utente.grado)
+            preparedStatement?.setString(7, utente.preferiti)
+
 
             val rowsAffected = preparedStatement?.executeUpdate()
 
