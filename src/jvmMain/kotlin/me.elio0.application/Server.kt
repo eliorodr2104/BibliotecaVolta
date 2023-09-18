@@ -39,6 +39,7 @@ fun main() {
     val environment = applicationEngineEnvironment {
         log = LoggerFactory.getLogger("ktor.application")
         connector {
+            host = "3.81.234.3"
             port = 8080
         }
         module(Application::module)
