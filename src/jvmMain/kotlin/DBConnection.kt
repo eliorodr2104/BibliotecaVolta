@@ -6,9 +6,9 @@ import kotlin.collections.ArrayList
 
 class DBConnection {
     private var conn: Connection
-    private var username = "root" // provide the username
-    private var password = "" // provide the corresponding password
-    private val url = "jdbc:mysql://localhost/biblioteca?useSSL=false&serverTimezone=UTC"
+    private var username = "admin" // provide the username
+    private var password = "Biblioteca-DATABASE-2023" // provide the corresponding password
+    private val url = "jdbc:mysql://database-biblioteca.c4zsxfczq0qj.us-east-1.rds.amazonaws.com:3306/biblioteca?characterEncoding=UTF-8"
 
     //ALTER TABLE tablename AUTO_INCREMENT = 1
 
