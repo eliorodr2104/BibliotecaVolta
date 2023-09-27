@@ -835,7 +835,6 @@ class DBConnection {
         return id.joinToString(",")
     }
 
-
     private fun getMax(): Int {
         val rs = estrai("SELECT MAX(IDPrestito) FROM prestiti")
         if (rs.next()) {
