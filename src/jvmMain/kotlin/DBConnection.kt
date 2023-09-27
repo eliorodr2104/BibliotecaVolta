@@ -847,9 +847,8 @@ class DBConnection {
             if (!preparedStatement.executeQuery().next() && id[i].toInt() != -1)
                 throw IllegalArgumentException("\"IDCategorie\" con valore \"${id[i]}\" assente nella tabella \"Categorie\"")
         }
-        return id.toString()
+        return id.joinToString(",")
     }
-
 
     private fun getMax(): Int {
         val rs = estrai("SELECT MAX(IDPrestito) FROM prestiti")
