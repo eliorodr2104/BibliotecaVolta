@@ -14,26 +14,11 @@ class DBConnection {
 
     init {
         conn = DriverManager.getConnection(url, username, password)
-
-        Thread {
-            while (true) {
-                try {
-                    //Eseguiamo una query di mantenimento
-                    conn.createStatement().execute("SELECT 1")
-                    Thread.sleep(10_000)
-                } catch (e: Exception) {
-
-                    conn.close()
-                    break
-                }
-            }
-        }.start()
     }
 
 
     //LIBRI
     fun estraiLibri(page: Int): String {
-
         try {
             val arr = ArrayList<DatiLibro>(10)
             // Crea la connessione al database ed esegue il comando "SELECT * FROM $table" che estrae tutti gli elementi della tabella data
